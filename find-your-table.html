@@ -1,0 +1,1023 @@
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find Your Table</title>
+  <style>
+    :root {
+      --bg: #fafafa; --card: #ffffff; --text: #111827; --muted: #6b7280; --accent:#8b5cf6;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--text); background: var(--bg); }
+    header { padding: 28px 16px 8px; text-align: center; }
+    h1 { margin: 0 0 8px; font-size: clamp(22px, 3.5vw, 36px); }
+    .sub { color: var(--muted); margin: 0 0 20px; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 12px 16px 40px; }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,.06); padding: 16px; }
+
+    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 720px) {
+      .row { grid-template-columns: 2fr 1fr; }
+    }
+
+    .input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 16px; outline: none; }
+    .input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(139, 92, 246, .15); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; font-size: 14px; }
+    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn.ghost { background: transparent; }
+
+    .results { margin-top: 10px; display: grid; gap: 10px; }
+    .result { border: 1px solid #f1f5f9; padding: 12px; border-radius: 12px; background: #fff; display:flex; align-items:center; justify-content:space-between; }
+    .name { font-weight: 600; }
+    .table { font-variant-numeric: tabular-nums; padding: 6px 10px; border-radius: 999px; background: #f3f4f6; }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+
+    details { border: 1px dashed #e5e7eb; border-radius: 12px; padding: 12px; }
+    summary { cursor: pointer; font-weight: 600; }
+
+    .pill { display:inline-block; padding: 6px 10px; border-radius: 999px; background:#eef2ff; color:#4338ca; font-weight:600; }
+
+    .grid { display:grid; gap: 8px; }
+
+    .qr-wrap { display:flex; align-items:center; justify-content:center; padding: 16px; background:#fff; border:1px solid #e5e7eb; border-radius: 12px; }
+
+    .footer { margin-top: 18px; text-align:center; color: var(--muted); font-size: 12px; }
+  </style>
+  <!-- QRCode library (MIT) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer=""></script>
+</head>
+<body>
+  <header>
+    <h1>Find Your Table</h1>
+    <p class="sub">Type your name to see your table number</p>
+  </header>
+
+  <main class="container">
+    <section class="row">
+      <div class="card">
+        <div class="grid" style="gap:12px">
+          <input id="search" class="input" type="text" placeholder="Start typing your first or last name…" autocomplete="name">
+          <div class="small muted">Tip: You can search by first name, last name, or any part of the name. Accents and case don’t matter.</div>
+          <div id="results" class="results"><div class="muted">No matches yet. Keep typing…</div></div>
+        </div>
+      </div>
+
+      <div class="grid" style="gap:12px">
+        <div class="card">
+          <div class="grid" style="gap:10px">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+              <strong>QR for this page</strong>
+              <button id="qrRefresh" class="btn">Refresh</button>
+            </div>
+            <div id="qrcode" class="qr-wrap" aria-label="QR Code for this page" title="file:///Users/donkor/Downloads/find-your-table.html"><canvas width="220" height="220" style="display: none;"></canvas><img src="data:image/png;base64,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" style="display: block;"></div>
+            <div class="small muted">Scan to open this exact page. Print on signage or add to invitations.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="grid" style="gap:10px">
+            <strong>Data Loader (optional)</strong>
+            <textarea id="paste" class="input" rows="6" placeholder="Paste lines like:\nFirst Last, Table 8\nAma Mensah, 12\nKofi Boateng, 5"></textarea>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="loadData" class="btn primary">Load Pasted Data</button>
+              <button id="downloadExample" class="btn">Download Example HTML (with your data)</button>
+            </div>
+            <div class="small muted">No need to edit code! Paste “Name, Table” per line and click Load. Then test search above.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div style="height:16px"></div>
+
+    <section class="card">
+      <details>
+        <summary>Optional: Show per‑table lists (for ushers)</summary>
+        <div id="byTable" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:12px"><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 1</span><span class="small muted">12 guests</span></div><div>Addo</div><div>Christy Ampadu</div><div>Cobbie Boasiako</div><div>Dickson Ampadu</div><div>Eric Osei</div><div>Hilda Addo</div><div>Joe Kissi</div><div>Lisette Kissi</div><div>Nana Yaa Osei</div><div>Otoabaa Asare</div><div>Selina Nana Pokuah</div><div>Victoria Boateng</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 2</span><span class="small muted">12 guests</span></div><div>Dela and Andrew Agbeko</div><div>Ebo Quansah</div><div>Ellen Gadza</div><div>Isaac Fordjuor</div><div>Karen Appiah Kubi</div><div>Mary Morisson</div><div>Mrs Dorcas Agbeko</div><div>Mrs Isaac Fordjuor</div><div>Pearl Sasu</div><div>Persis Appiah Kubi</div><div>Sampson Appiah Kubi</div><div>Samuel Wiredu</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 3</span><span class="small muted">10 guests</span></div><div>Amankwah 1</div><div>Amankwah 2</div><div>Betty Amankwah</div><div>Kofi Asare</div><div>Nelly Darko</div><div>Rita Darko</div><div>Sarah Asare</div><div>Sean Asare</div><div>Simon Asare</div><div>Solange Asare</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 4</span><span class="small muted">10 guests</span></div><div>Antoinette</div><div>Benedicta Agbeshie</div><div>Bra Effa</div><div>Faustina Sarpong</div><div>Joyce Asamoah</div><div>Mr Osei Bonsu</div><div>Mrs Mercy Aggrey Fynn</div><div>Mrs Osei Bonsu</div><div>Phyllis Mensah</div><div>Rosemond Gyimah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 5</span><span class="small muted">11 guests</span></div><div>Benjamin Asiedu</div><div>Bismark Boadi</div><div>Cassandra Berko</div><div>Emma Osei</div><div>Erica Osei</div><div>Ezekiel Asare</div><div>Flora</div><div>Gabriel Baffo-Sakyi</div><div>Isaiah Berko</div><div>Juliana Osei</div><div>Lina</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 6</span><span class="small muted">10 guests</span></div><div>Ama Adjei-Boateng</div><div>Boakye</div><div>Caleb Adjei-Boateng</div><div>Devin Adjei-Boateng</div><div>Eunice Amankwah</div><div>Jabez Adjei-Boateng</div><div>Justin Appiah Kubi</div><div>Kwadwo Ampim-Darko</div><div>Mary Boakye</div><div>Yaw Atwereboanah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 7</span><span class="small muted">11 guests</span></div><div>Adu Boafo</div><div>Beatrice Amoah</div><div>Edward Manu</div><div>Kofi Ofori</div><div>Mary Addai</div><div>Mr Opoku-Ware</div><div>Opoku-Ware</div><div>Paul Yeboah</div><div>Rebecca Yeboah</div><div>Sarah Manu</div><div>Yankey</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 8</span><span class="small muted">10 guests</span></div><div>Christina Ahenguah</div><div>Douglas Boakye</div><div>Gloria Donkor</div><div>Isaac Nkrumah</div><div>Mary Ohene Kusi</div><div>Mercy Owusu</div><div>Mrs Hilda Boakye</div><div>Ohene Kusi</div><div>Samuel Sarkodie</div><div>Thomas Ahenguah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 9</span><span class="small muted">11 guests</span></div><div>Abel Manu</div><div>Agyeman Opoku</div><div>Gombar</div><div>Haggar Opoku Mensah</div><div>Hana Manu</div><div>Mary Manu</div><div>Matilda Manu Gombar</div><div>Rita Yeboah</div><div>Ruth Manu</div><div>S K Dankwah</div><div>Samuel Mensah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 10</span><span class="small muted">10 guests</span></div><div>Abigail Osei Mensah</div><div>Christiana Appiagyei</div><div>Christina Osei Mensah</div><div>Gifty Rose</div><div>James Appiah Kubi</div><div>Jephtah Dey</div><div>Linda Fosu Dey</div><div>Margaret Osei Boateng</div><div>Sara Osei Mensah</div><div>Serwaa Amaning</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 11</span><span class="small muted">11 guests</span></div><div>Abigail Duodu</div><div>Daniel Owusu Djan</div><div>Ernest barnie</div><div>Harrison Poku</div><div>Linda Boachie</div><div>Mills Duodu</div><div>Owusu Djan</div><div>Samuel Osei</div><div>Wilhemina Osei</div><div>Will</div><div>Yaw Appau</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 12</span><span class="small muted">11 guests</span></div><div>Ebenezer</div><div>Joan Lake</div><div>Kelsy Evelyn Dundas</div><div>Maura Aning</div><div>Mrs Ford Osei Boakye</div><div>Naura Aning</div><div>Nicole Fontyn-Taylor</div><div>Nneka MacGregor</div><div>Paul Lake</div><div>Sledge Spraku</div><div>Tarah Paul</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 13</span><span class="small muted">10 guests</span></div><div>Abigail Adjei</div><div>Damson Oppong</div><div>Elder Dan Oteng</div><div>John K Amoah</div><div>Juliet Amponsah</div><div>Kyeame Adjei</div><div>Linda Oppong</div><div>Mrs Amoah</div><div>Nat Oteng</div><div>Oteng +1</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 14</span><span class="small muted">11 guests</span></div><div>Alex Harris</div><div>Allison Migisha</div><div>Attah Adjei-Boateng</div><div>Lola Umebuani</div><div>Mary Amofa</div><div>Nils Bonfils</div><div>Oppong Antwi</div><div>Parfait Migisha</div><div>Rashad Idris</div><div>Robell Nyirendah</div><div>Sayaka Ri</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 15</span><span class="small muted">11 guests</span></div><div>Elikem</div><div>George Acheampong</div><div>Jake (Ebenezer)</div><div>Jeremy Afrifa</div><div>Joash</div><div>Joshua</div><div>Kenneth Gyabaa</div><div>Kingsley Kwarteng</div><div>Kwazi Opoku-Ware</div><div>Nana Opoku Achepim</div><div>Richard Boateng</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 16</span><span class="small muted">10 guests</span></div><div>Asante Dickson</div><div>Ashley Opoku-Ware</div><div>Chelsea Afrifa</div><div>Helena Opoku-Ware</div><div>Hilary Owusu</div><div>Ikemefuna Ekweozor</div><div>Joseph Allen</div><div>Loretta Ampadu</div><div>Sherserry Anum</div><div>Stephanie Sarpong</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 17</span><span class="small muted">11 guests</span></div><div>Angela Yeboah</div><div>Desmond</div><div>Gabby</div><div>Isabelle Amoako</div><div>Kimberly Ofori</div><div>Linda Ofori</div><div>Mila - Oppong Antwi</div><div>Naomi Ofori</div><div>Obed Gyasi</div><div>Salafina Owusu</div><div>Vera</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 18</span><span class="small muted">9 guests</span></div><div>Abena Konadu</div><div>MC</div><div>Natalie</div><div>Natalie's helper</div><div>Vince</div><div>vince + 1</div><div>vince + 2</div><div>vince + 3</div><div>Vivien Schroeder</div></div></div>
+      </details>
+    </section>
+
+    <p class="footer">Made with ♥ for your big day. Works offline once loaded; host anywhere.</p>
+  </main>
+
+  <script>
+    // ------------ Data ------------------------------------------------------
+    // Default sample data. Replace this array OR use the Paste loader.
+    // Format: { name: "Guest Full Name", table: "Table Number or Name" }
+    let GUESTS = [
+  {
+    "name": "Abel Manu",
+    "table": "9"
+  },
+  {
+    "name": "Abena Konadu",
+    "table": "18"
+  },
+  {
+    "name": "Abigail Adjei",
+    "table": "13"
+  },
+  {
+    "name": "Abigail Duodu",
+    "table": "11"
+  },
+  {
+    "name": "Abigail Osei Mensah",
+    "table": "10"
+  },
+  {
+    "name": "Addo",
+    "table": "1"
+  },
+  {
+    "name": "Adu Boafo",
+    "table": "7"
+  },
+  {
+    "name": "Agyeman Opoku",
+    "table": "9"
+  },
+  {
+    "name": "Alex Harris",
+    "table": "14"
+  },
+  {
+    "name": "Allison Migisha",
+    "table": "14"
+  },
+  {
+    "name": "Ama Adjei-Boateng",
+    "table": "6"
+  },
+  {
+    "name": "Amankwah 1",
+    "table": "3"
+  },
+  {
+    "name": "Amankwah 2",
+    "table": "3"
+  },
+  {
+    "name": "Angela Yeboah",
+    "table": "17"
+  },
+  {
+    "name": "Antoinette",
+    "table": "4"
+  },
+  {
+    "name": "Asante Dickson",
+    "table": "16"
+  },
+  {
+    "name": "Ashley Opoku-Ware",
+    "table": "16"
+  },
+  {
+    "name": "Attah Adjei-Boateng",
+    "table": "14"
+  },
+  {
+    "name": "Beatrice Amoah",
+    "table": "7"
+  },
+  {
+    "name": "Benedicta Agbeshie",
+    "table": "4"
+  },
+  {
+    "name": "Benjamin Asiedu",
+    "table": "5"
+  },
+  {
+    "name": "Betty Amankwah",
+    "table": "3"
+  },
+  {
+    "name": "Bismark Boadi",
+    "table": "5"
+  },
+  {
+    "name": "Boakye",
+    "table": "6"
+  },
+  {
+    "name": "Bra Effa",
+    "table": "4"
+  },
+  {
+    "name": "Caleb Adjei-Boateng",
+    "table": "6"
+  },
+  {
+    "name": "Cassandra Berko",
+    "table": "5"
+  },
+  {
+    "name": "Chelsea Afrifa",
+    "table": "16"
+  },
+  {
+    "name": "Christiana Appiagyei",
+    "table": "10"
+  },
+  {
+    "name": "Christina Ahenguah",
+    "table": "8"
+  },
+  {
+    "name": "Christina Osei Mensah",
+    "table": "10"
+  },
+  {
+    "name": "Christy Ampadu",
+    "table": "1"
+  },
+  {
+    "name": "Cobbie Boasiako",
+    "table": "1"
+  },
+  {
+    "name": "Damson Oppong",
+    "table": "13"
+  },
+  {
+    "name": "Daniel Owusu Djan",
+    "table": "11"
+  },
+  {
+    "name": "Dela and Andrew Agbeko",
+    "table": "2"
+  },
+  {
+    "name": "Desmond",
+    "table": "17"
+  },
+  {
+    "name": "Devin Adjei-Boateng",
+    "table": "6"
+  },
+  {
+    "name": "Dickson Ampadu",
+    "table": "1"
+  },
+  {
+    "name": "Douglas Boakye",
+    "table": "8"
+  },
+  {
+    "name": "Ebenezer",
+    "table": "12"
+  },
+  {
+    "name": "Ebo Quansah",
+    "table": "2"
+  },
+  {
+    "name": "Edward Manu",
+    "table": "7"
+  },
+  {
+    "name": "Elder Dan Oteng",
+    "table": "13"
+  },
+  {
+    "name": "Elikem",
+    "table": "15"
+  },
+  {
+    "name": "Ellen Gadza",
+    "table": "2"
+  },
+  {
+    "name": "Emma Osei",
+    "table": "5"
+  },
+  {
+    "name": "Eric Osei",
+    "table": "1"
+  },
+  {
+    "name": "Erica Osei",
+    "table": "5"
+  },
+  {
+    "name": "Ernest barnie",
+    "table": "11"
+  },
+  {
+    "name": "Eunice Amankwah",
+    "table": "6"
+  },
+  {
+    "name": "Ezekiel Asare",
+    "table": "5"
+  },
+  {
+    "name": "Faustina Sarpong",
+    "table": "4"
+  },
+  {
+    "name": "Flora",
+    "table": "5"
+  },
+  {
+    "name": "Gabby",
+    "table": "17"
+  },
+  {
+    "name": "Gabriel Baffo-Sakyi",
+    "table": "5"
+  },
+  {
+    "name": "George Acheampong",
+    "table": "15"
+  },
+  {
+    "name": "Gifty Rose",
+    "table": "10"
+  },
+  {
+    "name": "Gloria Donkor",
+    "table": "8"
+  },
+  {
+    "name": "Gombar",
+    "table": "9"
+  },
+  {
+    "name": "Haggar Opoku Mensah",
+    "table": "9"
+  },
+  {
+    "name": "Hana Manu",
+    "table": "9"
+  },
+  {
+    "name": "Harrison Poku",
+    "table": "11"
+  },
+  {
+    "name": "Helena Opoku-Ware",
+    "table": "16"
+  },
+  {
+    "name": "Hilary Owusu",
+    "table": "16"
+  },
+  {
+    "name": "Hilda Addo",
+    "table": "1"
+  },
+  {
+    "name": "Ikemefuna Ekweozor",
+    "table": "16"
+  },
+  {
+    "name": "Isaac Fordjuor",
+    "table": "2"
+  },
+  {
+    "name": "Isaac Nkrumah",
+    "table": "8"
+  },
+  {
+    "name": "Isabelle Amoako",
+    "table": "17"
+  },
+  {
+    "name": "Isaiah Berko",
+    "table": "5"
+  },
+  {
+    "name": "Jabez Adjei-Boateng",
+    "table": "6"
+  },
+  {
+    "name": "Jake (Ebenezer)",
+    "table": "15"
+  },
+  {
+    "name": "James Appiah Kubi",
+    "table": "10"
+  },
+  {
+    "name": "Jephtah Dey",
+    "table": "10"
+  },
+  {
+    "name": "Jeremy Afrifa",
+    "table": "15"
+  },
+  {
+    "name": "Joan Lake",
+    "table": "12"
+  },
+  {
+    "name": "Joash",
+    "table": "15"
+  },
+  {
+    "name": "Joe Kissi",
+    "table": "1"
+  },
+  {
+    "name": "John K Amoah",
+    "table": "13"
+  },
+  {
+    "name": "Joseph Allen",
+    "table": "16"
+  },
+  {
+    "name": "Joshua",
+    "table": "15"
+  },
+  {
+    "name": "Joyce Asamoah",
+    "table": "4"
+  },
+  {
+    "name": "Juliana Osei",
+    "table": "5"
+  },
+  {
+    "name": "Juliet Amponsah",
+    "table": "13"
+  },
+  {
+    "name": "Justin Appiah Kubi",
+    "table": "6"
+  },
+  {
+    "name": "Karen Appiah Kubi",
+    "table": "2"
+  },
+  {
+    "name": "Kelsy Evelyn Dundas",
+    "table": "12"
+  },
+  {
+    "name": "Kenneth Gyabaa",
+    "table": "15"
+  },
+  {
+    "name": "Kimberly Ofori",
+    "table": "17"
+  },
+  {
+    "name": "Kingsley Kwarteng",
+    "table": "15"
+  },
+  {
+    "name": "Kofi Asare",
+    "table": "3"
+  },
+  {
+    "name": "Kofi Ofori",
+    "table": "7"
+  },
+  {
+    "name": "Kwadwo Ampim-Darko",
+    "table": "6"
+  },
+  {
+    "name": "Kwazi Opoku-Ware",
+    "table": "15"
+  },
+  {
+    "name": "Kyeame Adjei",
+    "table": "13"
+  },
+  {
+    "name": "Lina",
+    "table": "5"
+  },
+  {
+    "name": "Linda Boachie",
+    "table": "11"
+  },
+  {
+    "name": "Linda Fosu Dey",
+    "table": "10"
+  },
+  {
+    "name": "Linda Ofori",
+    "table": "17"
+  },
+  {
+    "name": "Linda Oppong",
+    "table": "13"
+  },
+  {
+    "name": "Lisette Kissi",
+    "table": "1"
+  },
+  {
+    "name": "Lola Umebuani",
+    "table": "14"
+  },
+  {
+    "name": "Loretta Ampadu",
+    "table": "16"
+  },
+  {
+    "name": "Margaret Osei Boateng",
+    "table": "10"
+  },
+  {
+    "name": "Mary Addai",
+    "table": "7"
+  },
+  {
+    "name": "Mary Amofa",
+    "table": "14"
+  },
+  {
+    "name": "Mary Boakye",
+    "table": "6"
+  },
+  {
+    "name": "Mary Manu",
+    "table": "9"
+  },
+  {
+    "name": "Mary Morisson",
+    "table": "2"
+  },
+  {
+    "name": "Mary Ohene Kusi",
+    "table": "8"
+  },
+  {
+    "name": "Matilda Manu Gombar",
+    "table": "9"
+  },
+  {
+    "name": "Maura Aning",
+    "table": "12"
+  },
+  {
+    "name": "MC",
+    "table": "18"
+  },
+  {
+    "name": "Mercy Owusu",
+    "table": "8"
+  },
+  {
+    "name": "Mila - Oppong Antwi",
+    "table": "17"
+  },
+  {
+    "name": "Mills Duodu",
+    "table": "11"
+  },
+  {
+    "name": "Mr Opoku-Ware",
+    "table": "7"
+  },
+  {
+    "name": "Mr Osei Bonsu",
+    "table": "4"
+  },
+  {
+    "name": "Mrs Amoah",
+    "table": "13"
+  },
+  {
+    "name": "Mrs Dorcas Agbeko",
+    "table": "2"
+  },
+  {
+    "name": "Mrs Ford Osei Boakye",
+    "table": "12"
+  },
+  {
+    "name": "Mrs Hilda Boakye",
+    "table": "8"
+  },
+  {
+    "name": "Mrs Isaac Fordjuor",
+    "table": "2"
+  },
+  {
+    "name": "Mrs Mercy Aggrey Fynn",
+    "table": "4"
+  },
+  {
+    "name": "Mrs Osei Bonsu",
+    "table": "4"
+  },
+  {
+    "name": "Nana Opoku Achepim",
+    "table": "15"
+  },
+  {
+    "name": "Nana Yaa Osei",
+    "table": "1"
+  },
+  {
+    "name": "Naomi Ofori",
+    "table": "17"
+  },
+  {
+    "name": "Nat Oteng",
+    "table": "13"
+  },
+  {
+    "name": "Natalie",
+    "table": "18"
+  },
+  {
+    "name": "Natalie's helper",
+    "table": "18"
+  },
+  {
+    "name": "Naura Aning",
+    "table": "12"
+  },
+  {
+    "name": "Nelly Darko",
+    "table": "3"
+  },
+  {
+    "name": "Nicole Fontyn-Taylor",
+    "table": "12"
+  },
+  {
+    "name": "Nils Bonfils",
+    "table": "14"
+  },
+  {
+    "name": "Nneka MacGregor",
+    "table": "12"
+  },
+  {
+    "name": "Obed Gyasi",
+    "table": "17"
+  },
+  {
+    "name": "Ohene Kusi",
+    "table": "8"
+  },
+  {
+    "name": "Opoku-Ware",
+    "table": "7"
+  },
+  {
+    "name": "Oppong Antwi",
+    "table": "14"
+  },
+  {
+    "name": "Oteng +1",
+    "table": "13"
+  },
+  {
+    "name": "Otoabaa Asare",
+    "table": "1"
+  },
+  {
+    "name": "Owusu Djan",
+    "table": "11"
+  },
+  {
+    "name": "Parfait Migisha",
+    "table": "14"
+  },
+  {
+    "name": "Paul Lake",
+    "table": "12"
+  },
+  {
+    "name": "Paul Yeboah",
+    "table": "7"
+  },
+  {
+    "name": "Pearl Sasu",
+    "table": "2"
+  },
+  {
+    "name": "Persis Appiah Kubi",
+    "table": "2"
+  },
+  {
+    "name": "Phyllis Mensah",
+    "table": "4"
+  },
+  {
+    "name": "Rashad Idris",
+    "table": "14"
+  },
+  {
+    "name": "Rebecca Yeboah",
+    "table": "7"
+  },
+  {
+    "name": "Richard Boateng",
+    "table": "15"
+  },
+  {
+    "name": "Rita Darko",
+    "table": "3"
+  },
+  {
+    "name": "Rita Yeboah",
+    "table": "9"
+  },
+  {
+    "name": "Robell Nyirendah",
+    "table": "14"
+  },
+  {
+    "name": "Rosemond Gyimah",
+    "table": "4"
+  },
+  {
+    "name": "Ruth Manu",
+    "table": "9"
+  },
+  {
+    "name": "S K Dankwah",
+    "table": "9"
+  },
+  {
+    "name": "Salafina Owusu",
+    "table": "17"
+  },
+  {
+    "name": "Sampson Appiah Kubi",
+    "table": "2"
+  },
+  {
+    "name": "Samuel Mensah",
+    "table": "9"
+  },
+  {
+    "name": "Samuel Osei",
+    "table": "11"
+  },
+  {
+    "name": "Samuel Sarkodie",
+    "table": "8"
+  },
+  {
+    "name": "Samuel Wiredu",
+    "table": "2"
+  },
+  {
+    "name": "Sara Osei Mensah",
+    "table": "10"
+  },
+  {
+    "name": "Sarah Asare",
+    "table": "3"
+  },
+  {
+    "name": "Sarah Manu",
+    "table": "7"
+  },
+  {
+    "name": "Sayaka Ri",
+    "table": "14"
+  },
+  {
+    "name": "Sean Asare",
+    "table": "3"
+  },
+  {
+    "name": "Selina Nana Pokuah",
+    "table": "1"
+  },
+  {
+    "name": "Serwaa Amaning",
+    "table": "10"
+  },
+  {
+    "name": "Sherserry Anum",
+    "table": "16"
+  },
+  {
+    "name": "Simon Asare",
+    "table": "3"
+  },
+  {
+    "name": "Sledge Spraku",
+    "table": "12"
+  },
+  {
+    "name": "Solange Asare",
+    "table": "3"
+  },
+  {
+    "name": "Stephanie Sarpong",
+    "table": "16"
+  },
+  {
+    "name": "Tarah Paul",
+    "table": "12"
+  },
+  {
+    "name": "Thomas Ahenguah",
+    "table": "8"
+  },
+  {
+    "name": "Vera",
+    "table": "17"
+  },
+  {
+    "name": "Victoria Boateng",
+    "table": "1"
+  },
+  {
+    "name": "Vince",
+    "table": "18"
+  },
+  {
+    "name": "vince + 1",
+    "table": "18"
+  },
+  {
+    "name": "vince + 2",
+    "table": "18"
+  },
+  {
+    "name": "vince + 3",
+    "table": "18"
+  },
+  {
+    "name": "Vivien Schroeder",
+    "table": "18"
+  },
+  {
+    "name": "Wilhemina Osei",
+    "table": "11"
+  },
+  {
+    "name": "Will",
+    "table": "11"
+  },
+  {
+    "name": "Yankey",
+    "table": "7"
+  },
+  {
+    "name": "Yaw Appau",
+    "table": "11"
+  },
+  {
+    "name": "Yaw Atwereboanah",
+    "table": "6"
+  }
+];
+
+    // ------------ Utilities -------------------------------------------------
+    const norm = s => (s || "").toString().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+    function dedupeAndSort(data){
+      // Remove empty, trim, and sort by name
+      const clean = data
+        .filter(x => x && x.name && x.table)
+        .map(x => ({ name: x.name.toString().trim(), table: x.table.toString().trim() }))
+        .sort((a,b) => a.name.localeCompare(b.name));
+      // Keep last occurrence if duplicates by normalized name
+      const map = new Map();
+      for(const g of clean){ map.set(norm(g.name), g); }
+      return Array.from(map.values());
+    }
+
+    function groupByTable(data){
+      const groups = new Map();
+      for(const g of data){
+        const key = g.table.toString();
+        if(!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(g);
+      }
+      for(const [k, arr] of groups){ arr.sort((a,b)=>a.name.localeCompare(b.name)); }
+      return Array.from(groups.entries()).sort((a,b)=>{
+        // numeric-aware sort where possible
+        const na = Number(a[0]), nb = Number(b[0]);
+        if(!isNaN(na) && !isNaN(nb)) return na - nb; 
+        return a[0].localeCompare(b[0]);
+      });
+    }
+
+    // Simple substring + token match scoring
+    function searchGuests(query, data){
+      const q = norm(query);
+      if(!q) return [];
+      const tokens = q.split(/\s+/).filter(Boolean);
+      return data
+        .map(g => {
+          const n = norm(g.name);
+          let score = 0;
+          if(n.includes(q)) score += 2; // full substring
+          for(const t of tokens){ if(n.includes(t)) score += 1; }
+          return { g, score };
+        })
+        .filter(x => x.score > 0)
+        .sort((a,b) => b.score - a.score || a.g.name.localeCompare(b.g.name))
+        .map(x => x.g)
+        .slice(0, 20);
+    }
+
+    function renderResults(list){
+      const el = document.getElementById('results');
+      el.innerHTML = '';
+      if(list.length === 0){ el.innerHTML = '<div class="muted">No matches yet. Keep typing…</div>'; return; }
+      for(const r of list){
+        const div = document.createElement('div');
+        div.className = 'result';
+        div.innerHTML = `<div class="name">${escapeHtml(r.name)}</div><div class="table" aria-label="Table Number">Table ${escapeHtml(r.table)}</div>`;
+        el.appendChild(div);
+      }
+    }
+
+    function renderTables(data){
+      const container = document.getElementById('byTable');
+      container.innerHTML = '';
+      const groups = groupByTable(data);
+      for(const [table, list] of groups){
+        const card = document.createElement('div');
+        card.className = 'card';
+        const items = list.map(x => `<div>${escapeHtml(x.name)}</div>`).join('');
+        card.innerHTML = `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table ${escapeHtml(table)}</span><span class="small muted">${list.length} guest${list.length!==1?'s':''}</span></div>${items}`;
+        container.appendChild(card);
+      }
+    }
+
+    function escapeHtml(s){
+      return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    // Convert current data into a new standalone HTML download (bakes in your data)
+    function downloadSelfContained(){
+      const blob = new Blob([document.documentElement.outerHTML.replace(/let GUESTS = \[[\s\S]*?\];/,
+        'let GUESTS = ' + JSON.stringify(GUESTS, null, 2) + ';')], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'find-your-table.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // ------------ QR --------------------------------------------------------
+    function makeQR(){
+      const box = document.getElementById('qrcode');
+      box.innerHTML = '';
+      const url = location.href;
+      new QRCode(box, {
+        text: url,
+        width: 220,
+        height: 220,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    // ------------ Event wiring ---------------------------------------------
+    function hydrate(){
+      GUESTS = dedupeAndSort(GUESTS);
+      renderTables(GUESTS);
+      renderResults([]);
+      makeQR();
+
+      const search = document.getElementById('search');
+      search.addEventListener('input', () => {
+        const list = searchGuests(search.value, GUESTS);
+        renderResults(list);
+      });
+
+      document.getElementById('qrRefresh').addEventListener('click', makeQR);
+      document.getElementById('loadData').addEventListener('click', () => {
+        const raw = document.getElementById('paste').value.trim();
+        if(!raw){ alert('Paste lines like:\nFirst Last, 8'); return; }
+        const lines = raw.split(/\n+/);
+        const parsed = [];
+        for(const line of lines){
+          const m = line.split(',');
+          if(m.length >= 2){
+            const name = m[0].trim();
+            const table = m.slice(1).join(',').trim(); // allow commas in table names if any
+            if(name && table){ parsed.push({ name, table }); }
+          }
+        }
+        if(parsed.length === 0){ alert('Could not parse any rows. Ensure each line has a comma separating name and table.'); return; }
+        GUESTS = dedupeAndSort(parsed);
+        document.getElementById('paste').value = '';
+        document.getElementById('search').value = '';
+        renderTables(GUESTS);
+        renderResults([]);
+        alert('Guest list loaded. Try searching!');
+      });
+
+      document.getElementById('downloadExample').addEventListener('click', downloadSelfContained);
+    }
+
+    document.addEventListener('DOMContentLoaded', hydrate);
+  </script>
+
+
+</body></html>
