@@ -1,6 +1,8 @@
-<html lang="en"><head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Find Your Table</title>
   <style>
     :root {
@@ -46,7 +48,7 @@
     .admin-badge { font-size: 12px; color:#065f46; background:#d1fae5; display:inline-block; padding:4px 8px; border-radius:999px; font-weight:600; }
   </style>
   <!-- QRCode library (MIT) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
   <header>
@@ -58,9 +60,9 @@
     <section class="row">
       <div class="card">
         <div class="grid" style="gap:12px">
-          <input id="search" class="input" type="text" placeholder="Start typing your first or last name…" autocomplete="name">
+          <input id="search" class="input" type="text" placeholder="Start typing your first or last name…" autocomplete="name" />
           <div class="small muted">Tip: You can search by first name, last name, or any part of the name. Accents and case don’t matter.</div>
-          <div id="results" class="results"><div class="result"><div class="name">Justin Appiah Kubi</div><div class="table" aria-label="Table Number">Table 2</div></div></div>
+          <div id="results" class="results"></div>
         </div>
       </div>
 
@@ -74,17 +76,17 @@
                 <button id="qrSave" class="btn">Save PNG</button>
               </div>
             </div>
-            <div id="qrcode" class="qr-wrap" aria-label="QR Code for this page" title="https://kwabenadonkor.github.io/guest_list/"><canvas width="220" height="220" style="display: none;"></canvas><img src="data:image/png;base64,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" style="display: block;"></div>
+            <div id="qrcode" class="qr-wrap" aria-label="QR Code for this page"></div>
             <div class="small muted">Scan to open this exact page. Print on signage or add to invitations.</div>
           </div>
         </div>
 
         <!-- ADMIN PANEL (hidden unless admin mode is enabled) -->
-        <div id="adminPanel">
+        <div id="adminPanel" hidden>
           <div class="card">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
               <strong>Admin: Data Loader</strong>
-              <span class="admin-badge" id="adminBadge">ADMIN MODE</span>
+              <span class="admin-badge" id="adminBadge" hidden>ADMIN MODE</span>
             </div>
             <div class="grid" style="gap:10px">
               <textarea id="paste" class="input" rows="6" placeholder="Paste lines like:\nFirst Last, Table 8\nAma Mensah, 12\nKofi Boateng, 5"></textarea>
@@ -103,9 +105,9 @@
     <div style="height:16px"></div>
 
     <section class="card">
-      <details open="">
-        <summary>Optional: Show per‑table lists (for ushers)</summary>
-        <div id="byTable" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:12px"><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 1</span><span class="small muted">12 guests</span></div><div>Ma Selina Nana Pokuah</div><div>Mr Addo</div><div>Mr Cobbie Boasiako</div><div>Mr Dickson Ampadu</div><div>Mr Eric Osei</div><div>Mr Joe Kissi</div><div>Mr Otoabaa Asare</div><div>Mrs Christy Ampadu</div><div>Mrs Hilda Addo</div><div>Mrs Lisette Kissi</div><div>Mrs Nana Yaa Osei</div><div>Mrs Victoria Boateng</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 2</span><span class="small muted">11 guests</span></div><div>Dela and Andrew Agbeko</div><div>Ellen Gadza</div><div>Justin Appiah Kubi</div><div>Karen Appiah Kubi</div><div>Mary Morisson</div><div>Mr Ebo Quansah</div><div>Mrs Dorcas Agbeko</div><div>Ms Pearl Sasu</div><div>Persis Appiah Kubi</div><div>Ps. Sampson Appiah Kubi</div><div>Samuel Wiredu</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 3</span><span class="small muted">10 guests</span></div><div>Amankwah 2</div><div>Awura Amankwah</div><div>Betty Amankwah</div><div>Mr Kofi Asare</div><div>Mrs Sarah Asare</div><div>Nelly Darko</div><div>Rita Darko</div><div>Sean Asare</div><div>Simon Asare</div><div>Solange Asare</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 4</span><span class="small muted">12 guests</span></div><div>Christina Ahenguah</div><div>Dr. Douglas Boakye</div><div>Dr. Isaac Fordjuor</div><div>Gloria Donkor</div><div>Isaac Nkrumah</div><div>Mercy Owusu</div><div>Mr Ohene Kusi</div><div>Mr Samuel Sarkodie</div><div>Mrs Hilda Boakye</div><div>Mrs Isaac Fordjuor</div><div>Mrs Mary Ohene Kusi</div><div>Thomas Ahenguah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 5</span><span class="small muted">11 guests</span></div><div>Benjamin Asiedu</div><div>Bismark Boadi</div><div>Cassandra Berko</div><div>Emma Osei</div><div>Erica Osei</div><div>Ezekiel Asare</div><div>Flora Baffo-Sakyi</div><div>Gabriel Baffo-Sakyi</div><div>Isaiah Berko</div><div>Juliana Osei</div><div>Lina Konadu</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 6</span><span class="small muted">9 guests</span></div><div>Ama Adjei-Boateng</div><div>Caleb Adjei-Boateng</div><div>Devin Adjei-Boateng</div><div>Eunice Amankwah</div><div>Jabez Adjei-Boateng</div><div>Kwadwo Ampim-Darko</div><div>Mr Boakye (Sly)</div><div>Mrs Mary Boakye</div><div>Yaw Atwereboanah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 7</span><span class="small muted">10 guests</span></div><div>Antoinette</div><div>Benedicta Agbeshie</div><div>Bra Effa</div><div>Faustina Sarpong</div><div>Joyce Asamoah</div><div>Mr Osei Bonsu</div><div>Mrs Mercy Aggrey Fynn</div><div>Mrs Osei Bonsu</div><div>Mrs Phyllis Mensah</div><div>Rosemond Gyimah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 8</span><span class="small muted">11 guests</span></div><div>Beatrice Amoah</div><div>Mr Joseph Yankey</div><div>Mr Opoku-Ware</div><div>Mr Otis Adu Boafo</div><div>Mr. Edward Manu</div><div>Mr. Kofi Ofori</div><div>Mr. Paul Yeboah</div><div>Mrs Mary Addai</div><div>Mrs Opoku-Ware</div><div>Mrs. Rebecca Yeboah</div><div>Mrs. Sarah Manu</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 9</span><span class="small muted">10 guests</span></div><div>Abigail Adjei</div><div>Elder Dan Oteng</div><div>Mr Kyeame Adjei</div><div>Mrs Juliet Amponsah</div><div>Mrs Linda Oppong</div><div>Mrs Ps Amoah</div><div>Nat Oteng</div><div>Oteng + 1</div><div>Pastor Damson Oppong</div><div>Ps John K Amoah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 10</span><span class="small muted">11 guests</span></div><div>Abigail Osei Mensah</div><div>Christiana Appiagyei</div><div>Christina Osei Mensah</div><div>Gifty Rose Owusu Donkor</div><div>James Appiah Kubi</div><div>Jephtah Dey</div><div>Linda Fosu Dey</div><div>Margaret Osei Boateng</div><div>Mr Donkor</div><div>Sara Osei Mensah</div><div>Serwaa Amaning</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 11</span><span class="small muted">11 guests</span></div><div>Ernest barnie</div><div>Harrison Poku</div><div>Linda Boachie</div><div>Mr Daniel Owusu Djan</div><div>Mr Mills Duodu</div><div>Mrs Abigail Duodu</div><div>Mrs Owusu Djan</div><div>Samuel Osei</div><div>Wilhemina Osei</div><div>Will</div><div>Yaw Appau</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 12</span><span class="small muted">11 guests</span></div><div>Ebenezer</div><div>Joan Lake</div><div>Kelsy Evelyn Dundas</div><div>Maura Aning</div><div>Mrs Ford Osei Boakye</div><div>Naura Aning</div><div>Nicole Fontyn-Taylor</div><div>Nneka MacGregor</div><div>Paul Lake</div><div>Sledge Spraku</div><div>Tarah Paul</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 13</span><span class="small muted">11 guests</span></div><div>Abel Manu</div><div>Agyeman Opoku</div><div>Hana Manu</div><div>Mary Manu</div><div>Mr Gombar</div><div>Mr. Samuel Mensah</div><div>Mrs Matilda Manu Gombar</div><div>Mrs. Haggar Opoku Mensah</div><div>Rita Yeboah</div><div>Ruth Manu</div><div>S K Dankwah</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 14</span><span class="small muted">11 guests</span></div><div>Alex Harris</div><div>Attah Adjei-Boateng</div><div>Lola Umebuani</div><div>Mary Amofa</div><div>Mr Parfait Migisha</div><div>Mrs Allison Migisha</div><div>Nils Bonfils</div><div>Oppong Antwi</div><div>Rashad Idris</div><div>Robell Nyirendah</div><div>Sayaka Ri</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 15</span><span class="small muted">11 guests</span></div><div>Elikem Worwui-Brown</div><div>George Acheampong</div><div>Jake Annor Darko Ebenezer</div><div>Jeremy Afrifa</div><div>Joash Ataakorerkpa</div><div>Joshua Tabi</div><div>Kenneth Gyabaa</div><div>Kingsley Kwarteng</div><div>Kwazi Opoku-Ware</div><div>Nana Opoku Achepim</div><div>Richard Boateng</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 16</span><span class="small muted">10 guests</span></div><div>Asante Dickson</div><div>Ashley Opoku-Ware</div><div>Chelsea Afrifa</div><div>Helena Opoku-Ware</div><div>Hilary Owusu</div><div>Ikemefuna Ekweozor</div><div>Joseph Allen</div><div>Loretta Ampadu</div><div>Sherserry Anum</div><div>Stephanie Sarpong</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 17</span><span class="small muted">11 guests</span></div><div>Angela Yeboah</div><div>Desmond Mensah</div><div>Gabriel Konadu-Okyere</div><div>Isabelle Amoako</div><div>Kimberly Ofori</div><div>Linda Ofori</div><div>Mila Oppong Antwi</div><div>Naomi Ofori</div><div>Obed Gyasi</div><div>Salafina Owusu</div><div>Vera Serwaa Safo</div></div><div class="card"><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table 18</span><span class="small muted">9 guests</span></div><div>Abena Konadu</div><div>MC</div><div>Natalie</div><div>Natalie's Assistant</div><div>vince + 1</div><div>vince + 2</div><div>vince + 3</div><div>Vince Addai</div><div>Vivien Schroeder</div></div></div>
+      <details>
+        <summary>View per‑table lists</summary>
+        <div id="byTable" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:12px"></div>
       </details>
     </section>
 
@@ -148,7 +150,7 @@
     // Default sample data. Replace this array OR use the Admin Paste loader.
     // Format: { name: "Guest Full Name", table: "Table Number or Name" }
     let GUESTS = [
-  {
+{
     "name": "Abel Manu",
     "table": "13"
   },
@@ -916,7 +918,7 @@
     "name": "Yaw Atwereboanah",
     "table": "6"
   }
-];
+    ];
 
     // ------------ Utilities -------------------------------------------------
     const norm = s => (s || "").toString().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -1085,6 +1087,5 @@
 
     document.addEventListener('DOMContentLoaded', hydrate);
   </script>
-
-
-</body></html>
+</body>
+</html>
