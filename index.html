@@ -19,15 +19,12 @@
     .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,.06); padding: 16px; }
 
     .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 720px) {
-      .row { grid-template-columns: 2fr 1fr; }
-    }
+    @media (min-width: 720px) { .row { grid-template-columns: 2fr 1fr; } }
 
     .input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 16px; outline: none; }
     .input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(139, 92, 246, .15); }
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; font-size: 14px; }
     .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn.ghost { background: transparent; }
 
     .results { margin-top: 10px; display: grid; gap: 10px; }
     .result { border: 1px solid #f1f5f9; padding: 12px; border-radius: 12px; background: #fff; display:flex; align-items:center; justify-content:space-between; }
@@ -47,6 +44,8 @@
     .qr-wrap { display:flex; align-items:center; justify-content:center; padding: 16px; background:#fff; border:1px solid #e5e7eb; border-radius: 12px; }
 
     .footer { margin-top: 18px; text-align:center; color: var(--muted); font-size: 12px; }
+
+    .admin-badge { font-size: 12px; color:#065f46; background:#d1fae5; display:inline-block; padding:4px 8px; border-radius:999px; font-weight:600; }
   </style>
   <!-- QRCode library (MIT) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
@@ -72,24 +71,34 @@
           <div class="grid" style="gap:10px">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
               <strong>QR for this page</strong>
-              <button id="qrRefresh" class="btn">Refresh</button>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button id="qrRefresh" class="btn">Refresh</button>
+                <button id="qrSave" class="btn">Save PNG</button>
+              </div>
             </div>
             <div id="qrcode" class="qr-wrap" aria-label="QR Code for this page"></div>
             <div class="small muted">Scan to open this exact page. Print on signage or add to invitations.</div>
           </div>
         </div>
 
-        <div class="card">
-          <div class="grid" style="gap:10px">
-            <strong>Data Loader (optional)</strong>
-            <textarea id="paste" class="input" rows="6" placeholder="Paste lines like:\nFirst Last, Table 8\nAma Mensah, 12\nKofi Boateng, 5"></textarea>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button id="loadData" class="btn primary">Load Pasted Data</button>
-              <button id="downloadExample" class="btn">Download Example HTML (with your data)</button>
+        <!-- ADMIN PANEL (hidden unless admin mode is enabled) -->
+        <div id="adminPanel" hidden>
+          <div class="card">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+              <strong>Admin: Data Loader</strong>
+              <span class="admin-badge" id="adminBadge" hidden>ADMIN MODE</span>
             </div>
-            <div class="small muted">No need to edit code! Paste “Name, Table” per line and click Load. Then test search above.</div>
+            <div class="grid" style="gap:10px">
+              <textarea id="paste" class="input" rows="6" placeholder="Paste lines like:\nFirst Last, Table 8\nAma Mensah, 12\nKofi Boateng, 5"></textarea>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button id="loadData" class="btn primary">Load Pasted Data</button>
+                <button id="downloadExample" class="btn">Download Example HTML (with your data)</button>
+              </div>
+              <div class="small muted">Admin-only. Paste “Name, Table” per line and click Load. Then test search above.</div>
+            </div>
           </div>
         </div>
+        <!-- /ADMIN PANEL -->
       </div>
     </section>
 
@@ -106,8 +115,39 @@
   </main>
 
   <script>
+    // ------------ Admin gate ------------------------------------------------
+    // Set your passcode here. You can also enable admin via URL:
+    //   https://your-site/index.html?admin=kds
+    // or by pressing Ctrl+Shift+A and entering the passcode.
+    const ADMIN_CODE = 'kds';
+
+    function setAdmin(on){
+      try{
+        document.getElementById('adminPanel').hidden = !on;
+        const badge = document.getElementById('adminBadge');
+        if(badge) badge.hidden = !on;
+        if(on){ sessionStorage.setItem('admin','1'); }
+      }catch(e){}
+    }
+    function checkAdminFromURL(){
+      const p = new URLSearchParams(location.search);
+      const code = p.get('admin');
+      if(code && code === ADMIN_CODE){ setAdmin(true); }
+    }
+    function wireAdminShortcut(){
+      document.addEventListener('keydown', (e)=>{
+        // Ctrl + Shift + A opens admin login
+        if(e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')){
+          const code = prompt('Enter admin passcode');
+          if(code && code === ADMIN_CODE){ setAdmin(true); alert('Admin mode enabled'); }
+          else if(code){ alert('Incorrect passcode'); }
+        }
+      });
+      if(sessionStorage.getItem('admin') === '1'){ setAdmin(true); }
+    }
+
     // ------------ Data ------------------------------------------------------
-    // Default sample data. Replace this array OR use the Paste loader.
+    // Default sample data. Replace this array OR use the Admin Paste loader.
     // Format: { name: "Guest Full Name", table: "Table Number or Name" }
     let GUESTS = [
       { name: "Ama Mensah", table: "8" },
@@ -121,12 +161,10 @@
     const norm = s => (s || "").toString().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
     function dedupeAndSort(data){
-      // Remove empty, trim, and sort by name
       const clean = data
         .filter(x => x && x.name && x.table)
         .map(x => ({ name: x.name.toString().trim(), table: x.table.toString().trim() }))
         .sort((a,b) => a.name.localeCompare(b.name));
-      // Keep last occurrence if duplicates by normalized name
       const map = new Map();
       for(const g of clean){ map.set(norm(g.name), g); }
       return Array.from(map.values());
@@ -141,14 +179,12 @@
       }
       for(const [k, arr] of groups){ arr.sort((a,b)=>a.name.localeCompare(b.name)); }
       return Array.from(groups.entries()).sort((a,b)=>{
-        // numeric-aware sort where possible
         const na = Number(a[0]), nb = Number(b[0]);
         if(!isNaN(na) && !isNaN(nb)) return na - nb; 
         return a[0].localeCompare(b[0]);
       });
     }
 
-    // Simple substring + token match scoring
     function searchGuests(query, data){
       const q = norm(query);
       if(!q) return [];
@@ -193,7 +229,7 @@
     }
 
     function escapeHtml(s){
-      return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      return s.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
     }
 
     // Convert current data into a new standalone HTML download (bakes in your data)
@@ -202,7 +238,7 @@
         'let GUESTS = ' + JSON.stringify(GUESTS, null, 2) + ';')], { type: 'text/html;charset=utf-8' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'find-your-table.html';
+      a.download = 'index.html';
       a.click();
       URL.revokeObjectURL(a.href);
     }
@@ -211,17 +247,37 @@
     function makeQR(){
       const box = document.getElementById('qrcode');
       box.innerHTML = '';
-      const url = location.href;
-      new QRCode(box, {
-        text: url,
-        width: 220,
-        height: 220,
-        correctLevel: QRCode.CorrectLevel.M
-      });
+      const url = location.href; // use deployed URL when hosted
+      new QRCode(box, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+    }
+    function saveQR(){
+      const canvas = document.querySelector('#qrcode canvas');
+      if(canvas){
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'wedding-qr.png';
+        a.click();
+      } else {
+        // Fallback if QRCode library rendered an <img>
+        const img = document.querySelector('#qrcode img');
+        if(!img){ alert('QR not ready yet'); return; }
+        const c = document.createElement('canvas');
+        const ctx = c.getContext('2d');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+        const a = document.createElement('a');
+        a.href = c.toDataURL('image/png');
+        a.download = 'wedding-qr.png';
+        a.click();
+      }
     }
 
     // ------------ Event wiring ---------------------------------------------
     function hydrate(){
+      // admin gating
+      wireAdminShortcut();
+      checkAdminFromURL();
+
       GUESTS = dedupeAndSort(GUESTS);
       renderTables(GUESTS);
       renderResults([]);
@@ -234,54 +290,39 @@
       });
 
       document.getElementById('qrRefresh').addEventListener('click', makeQR);
-      document.getElementById('loadData').addEventListener('click', () => {
-        const raw = document.getElementById('paste').value.trim();
-        if(!raw){ alert('Paste lines like:\nFirst Last, 8'); return; }
-        const lines = raw.split(/\n+/);
-        const parsed = [];
-        for(const line of lines){
-          const m = line.split(',');
-          if(m.length >= 2){
-            const name = m[0].trim();
-            const table = m.slice(1).join(',').trim(); // allow commas in table names if any
-            if(name && table){ parsed.push({ name, table }); }
-          }
-        }
-        if(parsed.length === 0){ alert('Could not parse any rows. Ensure each line has a comma separating name and table.'); return; }
-        GUESTS = dedupeAndSort(parsed);
-        document.getElementById('paste').value = '';
-        document.getElementById('search').value = '';
-        renderTables(GUESTS);
-        renderResults([]);
-        alert('Guest list loaded. Try searching!');
-      });
+      document.getElementById('qrSave').addEventListener('click', saveQR);
 
-      document.getElementById('downloadExample').addEventListener('click', downloadSelfContained);
+      // Admin-only controls (panel is hidden unless admin)
+      const loadBtn = document.getElementById('loadData');
+      if(loadBtn){
+        loadBtn.addEventListener('click', () => {
+          const raw = document.getElementById('paste').value.trim();
+          if(!raw){ alert('Paste lines like:\nFirst Last, 8'); return; }
+          const lines = raw.split(/\n+/);
+          const parsed = [];
+          for(const line of lines){
+            const m = line.split(',');
+            if(m.length >= 2){
+              const name = m[0].trim();
+              const table = m.slice(1).join(',').trim(); // allow commas in table names
+              if(name && table){ parsed.push({ name, table }); }
+            }
+          }
+          if(parsed.length === 0){ alert('Could not parse any rows. Ensure each line has a comma separating name and table.'); return; }
+          GUESTS = dedupeAndSort(parsed);
+          document.getElementById('paste').value = '';
+          document.getElementById('search').value = '';
+          renderTables(GUESTS);
+          renderResults([]);
+          alert('Guest list loaded. Try searching!');
+        });
+      }
+
+      const dlBtn = document.getElementById('downloadExample');
+      if(dlBtn){ dlBtn.addEventListener('click', downloadSelfContained); }
     }
 
     document.addEventListener('DOMContentLoaded', hydrate);
   </script>
-<script>(function(){
-  const ADMIN_CODE = 'CHANGE-ME-ADMIN-CODE';
-  function enableAdmin(){ sessionStorage.setItem('admin','1'); apply(true); alert('Admin mode enabled'); }
-  function isAdmin(){ return sessionStorage.getItem('admin')==='1'; }
-  function apply(force){
-    const paste = document.getElementById('paste');
-    const adminCard = paste ? paste.closest('.card') : null;
-    if(adminCard){ adminCard.style.display = (force || isAdmin()) ? '' : 'none'; }
-  }
-  document.addEventListener('keydown', function(e){
-    if(e.ctrlKey && e.shiftKey && (e.key==='A' || e.key==='a')){
-      const code = prompt('Enter admin passcode');
-      if(code && code===ADMIN_CODE) enableAdmin();
-      else if(code) alert('Incorrect passcode');
-    }
-  });
-  document.addEventListener('DOMContentLoaded', function(){
-    apply(false);
-    const params = new URLSearchParams(location.search);
-    if(params.get('admin')===ADMIN_CODE) enableAdmin();
-  });
-})();</script>
 </body>
 </html>
