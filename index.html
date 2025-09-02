@@ -5,49 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Find Your Table</title>
   <style>
-    :root {
-      --bg: #fafafa; --card: #ffffff; --text: #111827; --muted: #6b7280; --accent:#8b5cf6;
-      --radius: 16px;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--text); background: var(--bg); }
-    header { padding: 28px 16px 8px; text-align: center; }
-    h1 { margin: 0 0 8px; font-size: clamp(22px, 3.5vw, 36px); }
-    .sub { color: var(--muted); margin: 0 0 20px; }
-
-    .container { max-width: 780px; margin: 0 auto; padding: 12px 16px 40px; }
-    .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,.06); padding: 16px; }
-
-    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
-    @media (min-width: 720px) { .row { grid-template-columns: 2fr 1fr; } }
-
-    .input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 16px; outline: none; }
-    .input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(139, 92, 246, .15); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; font-size: 14px; }
-    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-    .results { margin-top: 10px; display: grid; gap: 10px; }
-    .result { border: 1px solid #f1f5f9; padding: 12px; border-radius: 12px; background: #fff; display:flex; align-items:center; justify-content:space-between; }
-    .name { font-weight: 600; }
-    .table { font-variant-numeric: tabular-nums; padding: 6px 10px; border-radius: 999px; background: #f3f4f6; }
-
-    .muted { color: var(--muted); }
-    .small { font-size: 12px; }
-
-    details { border: 1px dashed #e5e7eb; border-radius: 12px; padding: 12px; }
-    summary { cursor: pointer; font-weight: 600; }
-
-    .pill { display:inline-block; padding: 6px 10px; border-radius: 999px; background:#eef2ff; color:#4338ca; font-weight:600; }
-
-    .grid { display:grid; gap: 8px; }
-
-    .qr-wrap { display:flex; align-items:center; justify-content:center; padding: 16px; background:#fff; border:1px solid #e5e7eb; border-radius: 12px; }
-
-    .footer { margin-top: 18px; text-align:center; color: var(--muted); font-size: 12px; }
-
-    .admin-badge { font-size: 12px; color:#065f46; background:#d1fae5; display:inline-block; padding:4px 8px; border-radius:999px; font-weight:600; }
+    :root { --bg:#fafafa; --card:#ffffff; --text:#111827; --muted:#6b7280; --accent:#8b5cf6; --radius:16px; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";color:var(--text);background:var(--bg)}
+    header{padding:28px 16px 8px;text-align:center}
+    h1{margin:0 0 8px;font-size:clamp(22px,3.5vw,36px)}
+    .sub{color:var(--muted);margin:0 0 20px}
+    .container{max-width:780px;margin:0 auto;padding:12px 16px 40px}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:0 4px 24px rgba(0,0,0,.06);padding:16px}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width:720px){.row{grid-template-columns:2fr 1fr}}
+    .input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #e5e7eb;font-size:16px;outline:none}
+    .input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(139,92,246,.15)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;cursor:pointer;font-size:14px}
+    .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .results{margin-top:10px;display:grid;gap:10px}
+    .result{border:1px solid #f1f5f9;padding:12px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:space-between}
+    .name{font-weight:600}
+    .table{font-variant-numeric:tabular-nums;padding:6px 10px;border-radius:999px;background:#f3f4f6}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    details{border:1px dashed #e5e7eb;border-radius:12px;padding:12px}
+    summary{cursor:pointer;font-weight:600}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:600}
+    .grid{display:grid;gap:8px}
+    .qr-wrap{display:flex;align-items:center;justify-content:center;padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px}
+    .footer{margin-top:18px;text-align:center;color:var(--muted);font-size:12px}
+    .admin-badge{font-size:12px;color:#065f46;background:#d1fae5;display:inline-block;padding:4px 8px;border-radius:999px;font-weight:600}
+    .admin-only{display:none !important}
+    body.admin-on .admin-only{display:block !important}
   </style>
-  <!-- QRCode library (MIT) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 </head>
 <body>
@@ -69,9 +56,9 @@
       <div class="grid" style="gap:12px">
         <div class="card">
           <div class="grid" style="gap:10px">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
               <strong>QR for this page</strong>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <button id="qrRefresh" class="btn">Refresh</button>
                 <button id="qrSave" class="btn">Save PNG</button>
               </div>
@@ -81,16 +68,16 @@
           </div>
         </div>
 
-        <!-- ADMIN PANEL (hidden unless admin mode is enabled) -->
-        <div id="adminPanel" hidden>
+        <!-- ADMIN PANEL (hidden unless body has .admin-on) -->
+        <div id="adminPanel" class="admin-only">
           <div class="card">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
               <strong>Admin: Data Loader</strong>
-              <span class="admin-badge" id="adminBadge" hidden>ADMIN MODE</span>
+              <span class="admin-badge" id="adminBadge">ADMIN MODE</span>
             </div>
             <div class="grid" style="gap:10px">
               <textarea id="paste" class="input" rows="6" placeholder="Paste lines like:\nFirst Last, Table 8\nAma Mensah, 12\nKofi Boateng, 5"></textarea>
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <button id="loadData" class="btn primary">Load Pasted Data</button>
                 <button id="downloadExample" class="btn">Download Example HTML (with your data)</button>
               </div>
@@ -106,8 +93,8 @@
 
     <section class="card">
       <details>
-        <summary>View per‑table lists</summary>
-        <div id="byTable" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:12px"></div>
+        <summary>Optional: Show per‑table lists (for ushers)</summary>
+        <div id="byTable" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px"></div>
       </details>
     </section>
 
@@ -115,973 +102,327 @@
   </main>
 
   <script>
-    // ------------ Admin gate ------------------------------------------------
-    // Set your passcode here. You can also enable admin via URL:
-    //   https://your-site/index.html?admin=kds
-    // or by pressing Ctrl+Shift+A and entering the passcode.
-    const ADMIN_CODE = 'kds';
+    // ------------ Admin gate (robust) --------------------------------------
+    const ADMIN_CODE = 'kds'; // change if you want a different passcode
 
-    function setAdmin(on){
-      try{
-        document.getElementById('adminPanel').hidden = !on;
-        const badge = document.getElementById('adminBadge');
-        if(badge) badge.hidden = !on;
-        if(on){ sessionStorage.setItem('admin','1'); }
-      }catch(e){}
+    function enableAdmin(){
+      document.body.classList.add('admin-on');
+      sessionStorage.setItem('admin','1');
+      try{ const url=new URL(location.href); if(url.searchParams.has('admin')){ url.searchParams.delete('admin'); history.replaceState({},'',url.toString()); } }catch(e){}
     }
-    function checkAdminFromURL(){
-      const p = new URLSearchParams(location.search);
-      const code = p.get('admin');
-      if(code && code === ADMIN_CODE){ setAdmin(true); }
+    function tryURLAdmin(){
+      try{ const p=new URLSearchParams(location.search); const code=p.get('admin'); if(code && code===ADMIN_CODE){ enableAdmin(); } }catch(e){}
     }
     function wireAdminShortcut(){
       document.addEventListener('keydown', (e)=>{
-        // Ctrl + Shift + A opens admin login
-        if(e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')){
-          const code = prompt('Enter admin passcode');
-          if(code && code === ADMIN_CODE){ setAdmin(true); alert('Admin mode enabled'); }
+        if(e.ctrlKey && e.shiftKey && (e.key==='A' || e.key==='a')){
+          const code=prompt('Enter admin passcode');
+          if(code && code===ADMIN_CODE){ enableAdmin(); alert('Admin mode enabled'); }
           else if(code){ alert('Incorrect passcode'); }
         }
       });
-      if(sessionStorage.getItem('admin') === '1'){ setAdmin(true); }
+      if(sessionStorage.getItem('admin')==='1'){ document.body.classList.add('admin-on'); }
     }
 
-    // ------------ Data ------------------------------------------------------
-    // Default sample data. Replace this array OR use the Admin Paste loader.
-    // Format: { name: "Guest Full Name", table: "Table Number or Name" }
+    // ------------ Data (YOUR LIST, no placeholders) ------------------------
     let GUESTS = [
-{
-    "name": "Abel Manu",
-    "table": "13"
-  },
-  {
-    "name": "Abena Konadu",
-    "table": "18"
-  },
-  {
-    "name": "Abigail Adjei",
-    "table": "9"
-  },
-  {
-    "name": "Abigail Osei Mensah",
-    "table": "10"
-  },
-  {
-    "name": "Agyeman Opoku",
-    "table": "13"
-  },
-  {
-    "name": "Alex Harris",
-    "table": "14"
-  },
-  {
-    "name": "Ama Adjei-Boateng",
-    "table": "6"
-  },
-  {
-    "name": "Amankwah 2",
-    "table": "3"
-  },
-  {
-    "name": "Angela Yeboah",
-    "table": "17"
-  },
-  {
-    "name": "Antoinette",
-    "table": "7"
-  },
-  {
-    "name": "Asante Dickson",
-    "table": "16"
-  },
-  {
-    "name": "Ashley Opoku-Ware",
-    "table": "16"
-  },
-  {
-    "name": "Attah Adjei-Boateng",
-    "table": "14"
-  },
-  {
-    "name": "Awura Amankwah",
-    "table": "3"
-  },
-  {
-    "name": "Beatrice Amoah",
-    "table": "8"
-  },
-  {
-    "name": "Benedicta Agbeshie",
-    "table": "7"
-  },
-  {
-    "name": "Benjamin Asiedu",
-    "table": "5"
-  },
-  {
-    "name": "Betty Amankwah",
-    "table": "3"
-  },
-  {
-    "name": "Bismark Boadi",
-    "table": "5"
-  },
-  {
-    "name": "Bra Effa",
-    "table": "7"
-  },
-  {
-    "name": "Caleb Adjei-Boateng",
-    "table": "6"
-  },
-  {
-    "name": "Cassandra Berko",
-    "table": "5"
-  },
-  {
-    "name": "Chelsea Afrifa",
-    "table": "16"
-  },
-  {
-    "name": "Christiana Appiagyei",
-    "table": "10"
-  },
-  {
-    "name": "Christina Ahenguah",
-    "table": "4"
-  },
-  {
-    "name": "Christina Osei Mensah",
-    "table": "10"
-  },
-  {
-    "name": "Dela and Andrew Agbeko",
-    "table": "2"
-  },
-  {
-    "name": "Desmond Mensah",
-    "table": "17"
-  },
-  {
-    "name": "Devin Adjei-Boateng",
-    "table": "6"
-  },
-  {
-    "name": "Dr. Douglas Boakye",
-    "table": "4"
-  },
-  {
-    "name": "Dr. Isaac Fordjuor",
-    "table": "4"
-  },
-  {
-    "name": "Ebenezer",
-    "table": "12"
-  },
-  {
-    "name": "Elder Dan Oteng",
-    "table": "9"
-  },
-  {
-    "name": "Elikem Worwui-Brown",
-    "table": "15"
-  },
-  {
-    "name": "Ellen Gadza",
-    "table": "2"
-  },
-  {
-    "name": "Emma Osei",
-    "table": "5"
-  },
-  {
-    "name": "Erica Osei",
-    "table": "5"
-  },
-  {
-    "name": "Ernest barnie",
-    "table": "11"
-  },
-  {
-    "name": "Eunice Amankwah",
-    "table": "6"
-  },
-  {
-    "name": "Ezekiel Asare",
-    "table": "5"
-  },
-  {
-    "name": "Faustina Sarpong",
-    "table": "7"
-  },
-  {
-    "name": "Flora Baffo-Sakyi",
-    "table": "5"
-  },
-  {
-    "name": "Gabriel Baffo-Sakyi",
-    "table": "5"
-  },
-  {
-    "name": "Gabriel Konadu-Okyere",
-    "table": "17"
-  },
-  {
-    "name": "George Acheampong",
-    "table": "15"
-  },
-  {
-    "name": "Gifty Rose Owusu Donkor",
-    "table": "10"
-  },
-  {
-    "name": "Gloria Donkor",
-    "table": "4"
-  },
-  {
-    "name": "Hana Manu",
-    "table": "13"
-  },
-  {
-    "name": "Harrison Poku",
-    "table": "11"
-  },
-  {
-    "name": "Helena Opoku-Ware",
-    "table": "16"
-  },
-  {
-    "name": "Hilary Owusu",
-    "table": "16"
-  },
-  {
-    "name": "Ikemefuna Ekweozor",
-    "table": "16"
-  },
-  {
-    "name": "Isaac Nkrumah",
-    "table": "4"
-  },
-  {
-    "name": "Isabelle Amoako",
-    "table": "17"
-  },
-  {
-    "name": "Isaiah Berko",
-    "table": "5"
-  },
-  {
-    "name": "Jabez Adjei-Boateng",
-    "table": "6"
-  },
-  {
-    "name": "Jake Annor Darko Ebenezer",
-    "table": "15"
-  },
-  {
-    "name": "James Appiah Kubi",
-    "table": "10"
-  },
-  {
-    "name": "Jephtah Dey",
-    "table": "10"
-  },
-  {
-    "name": "Jeremy Afrifa",
-    "table": "15"
-  },
-  {
-    "name": "Joan Lake",
-    "table": "12"
-  },
-  {
-    "name": "Joash Ataakorerkpa",
-    "table": "15"
-  },
-  {
-    "name": "Joseph Allen",
-    "table": "16"
-  },
-  {
-    "name": "Joshua Tabi",
-    "table": "15"
-  },
-  {
-    "name": "Joyce Asamoah",
-    "table": "7"
-  },
-  {
-    "name": "Juliana Osei",
-    "table": "5"
-  },
-  {
-    "name": "Justin Appiah Kubi",
-    "table": "2"
-  },
-  {
-    "name": "Karen Appiah Kubi",
-    "table": "2"
-  },
-  {
-    "name": "Kelsy Evelyn Dundas",
-    "table": "12"
-  },
-  {
-    "name": "Kenneth Gyabaa",
-    "table": "15"
-  },
-  {
-    "name": "Kimberly Ofori",
-    "table": "17"
-  },
-  {
-    "name": "Kingsley Kwarteng",
-    "table": "15"
-  },
-  {
-    "name": "Kwadwo Ampim-Darko",
-    "table": "6"
-  },
-  {
-    "name": "Kwazi Opoku-Ware",
-    "table": "15"
-  },
-  {
-    "name": "Lina Konadu",
-    "table": "5"
-  },
-  {
-    "name": "Linda Boachie",
-    "table": "11"
-  },
-  {
-    "name": "Linda Fosu Dey",
-    "table": "10"
-  },
-  {
-    "name": "Linda Ofori",
-    "table": "17"
-  },
-  {
-    "name": "Lola Umebuani",
-    "table": "14"
-  },
-  {
-    "name": "Loretta Ampadu",
-    "table": "16"
-  },
-  {
-    "name": "Ma Selina Nana Pokuah",
-    "table": "1"
-  },
-  {
-    "name": "Margaret Osei Boateng",
-    "table": "10"
-  },
-  {
-    "name": "Mary Amofa",
-    "table": "14"
-  },
-  {
-    "name": "Mary Manu",
-    "table": "13"
-  },
-  {
-    "name": "Mary Morisson",
-    "table": "2"
-  },
-  {
-    "name": "Maura Aning",
-    "table": "12"
-  },
-  {
-    "name": "MC",
-    "table": "18"
-  },
-  {
-    "name": "Mercy Owusu",
-    "table": "4"
-  },
-  {
-    "name": "Mila Oppong Antwi",
-    "table": "17"
-  },
-  {
-    "name": "Mr Addo",
-    "table": "1"
-  },
-  {
-    "name": "Mr Boakye (Sly)",
-    "table": "6"
-  },
-  {
-    "name": "Mr Cobbie Boasiako",
-    "table": "1"
-  },
-  {
-    "name": "Mr Daniel Owusu Djan",
-    "table": "11"
-  },
-  {
-    "name": "Mr Dickson Ampadu",
-    "table": "1"
-  },
-  {
-    "name": "Mr Donkor",
-    "table": "10"
-  },
-  {
-    "name": "Mr Ebo Quansah",
-    "table": "2"
-  },
-  {
-    "name": "Mr Eric Osei",
-    "table": "1"
-  },
-  {
-    "name": "Mr Gombar",
-    "table": "13"
-  },
-  {
-    "name": "Mr Joe Kissi",
-    "table": "1"
-  },
-  {
-    "name": "Mr Joseph Yankey",
-    "table": "8"
-  },
-  {
-    "name": "Mr Kofi Asare",
-    "table": "3"
-  },
-  {
-    "name": "Mr Kyeame Adjei",
-    "table": "9"
-  },
-  {
-    "name": "Mr Mills Duodu",
-    "table": "11"
-  },
-  {
-    "name": "Mr Ohene Kusi",
-    "table": "4"
-  },
-  {
-    "name": "Mr Opoku-Ware",
-    "table": "8"
-  },
-  {
-    "name": "Mr Osei Bonsu",
-    "table": "7"
-  },
-  {
-    "name": "Mr Otis Adu Boafo",
-    "table": "8"
-  },
-  {
-    "name": "Mr Otoabaa Asare",
-    "table": "1"
-  },
-  {
-    "name": "Mr Parfait Migisha",
-    "table": "14"
-  },
-  {
-    "name": "Mr Samuel Sarkodie",
-    "table": "4"
-  },
-  {
-    "name": "Mr. Edward Manu",
-    "table": "8"
-  },
-  {
-    "name": "Mr. Kofi Ofori",
-    "table": "8"
-  },
-  {
-    "name": "Mr. Paul Yeboah",
-    "table": "8"
-  },
-  {
-    "name": "Mr. Samuel Mensah",
-    "table": "13"
-  },
-  {
-    "name": "Mrs Abigail Duodu",
-    "table": "11"
-  },
-  {
-    "name": "Mrs Allison Migisha",
-    "table": "14"
-  },
-  {
-    "name": "Mrs Christy Ampadu",
-    "table": "1"
-  },
-  {
-    "name": "Mrs Dorcas Agbeko",
-    "table": "2"
-  },
-  {
-    "name": "Mrs Ford Osei Boakye",
-    "table": "12"
-  },
-  {
-    "name": "Mrs Hilda Addo",
-    "table": "1"
-  },
-  {
-    "name": "Mrs Hilda Boakye",
-    "table": "4"
-  },
-  {
-    "name": "Mrs Isaac Fordjuor",
-    "table": "4"
-  },
-  {
-    "name": "Mrs Juliet Amponsah",
-    "table": "9"
-  },
-  {
-    "name": "Mrs Linda Oppong",
-    "table": "9"
-  },
-  {
-    "name": "Mrs Lisette Kissi",
-    "table": "1"
-  },
-  {
-    "name": "Mrs Mary Addai",
-    "table": "8"
-  },
-  {
-    "name": "Mrs Mary Boakye",
-    "table": "6"
-  },
-  {
-    "name": "Mrs Mary Ohene Kusi",
-    "table": "4"
-  },
-  {
-    "name": "Mrs Matilda Manu Gombar",
-    "table": "13"
-  },
-  {
-    "name": "Mrs Mercy Aggrey Fynn",
-    "table": "7"
-  },
-  {
-    "name": "Mrs Nana Yaa Osei",
-    "table": "1"
-  },
-  {
-    "name": "Mrs Opoku-Ware",
-    "table": "8"
-  },
-  {
-    "name": "Mrs Osei Bonsu",
-    "table": "7"
-  },
-  {
-    "name": "Mrs Owusu Djan",
-    "table": "11"
-  },
-  {
-    "name": "Mrs Phyllis Mensah",
-    "table": "7"
-  },
-  {
-    "name": "Mrs Ps Amoah",
-    "table": "9"
-  },
-  {
-    "name": "Mrs Sarah Asare",
-    "table": "3"
-  },
-  {
-    "name": "Mrs Victoria Boateng",
-    "table": "1"
-  },
-  {
-    "name": "Mrs. Haggar Opoku Mensah",
-    "table": "13"
-  },
-  {
-    "name": "Mrs. Rebecca Yeboah",
-    "table": "8"
-  },
-  {
-    "name": "Mrs. Sarah Manu",
-    "table": "8"
-  },
-  {
-    "name": "Ms Pearl Sasu",
-    "table": "2"
-  },
-  {
-    "name": "Nana Opoku Achepim",
-    "table": "15"
-  },
-  {
-    "name": "Naomi Ofori",
-    "table": "17"
-  },
-  {
-    "name": "Nat Oteng",
-    "table": "9"
-  },
-  {
-    "name": "Natalie",
-    "table": "18"
-  },
-  {
-    "name": "Natalie's Assistant",
-    "table": "18"
-  },
-  {
-    "name": "Naura Aning",
-    "table": "12"
-  },
-  {
-    "name": "Nelly Darko",
-    "table": "3"
-  },
-  {
-    "name": "Nicole Fontyn-Taylor",
-    "table": "12"
-  },
-  {
-    "name": "Nils Bonfils",
-    "table": "14"
-  },
-  {
-    "name": "Nneka MacGregor",
-    "table": "12"
-  },
-  {
-    "name": "Obed Gyasi",
-    "table": "17"
-  },
-  {
-    "name": "Oppong Antwi",
-    "table": "14"
-  },
-  {
-    "name": "Oteng + 1",
-    "table": "9"
-  },
-  {
-    "name": "Pastor Damson Oppong",
-    "table": "9"
-  },
-  {
-    "name": "Paul Lake",
-    "table": "12"
-  },
-  {
-    "name": "Persis Appiah Kubi",
-    "table": "2"
-  },
-  {
-    "name": "Ps John K Amoah",
-    "table": "9"
-  },
-  {
-    "name": "Ps. Sampson Appiah Kubi",
-    "table": "2"
-  },
-  {
-    "name": "Rashad Idris",
-    "table": "14"
-  },
-  {
-    "name": "Richard Boateng",
-    "table": "15"
-  },
-  {
-    "name": "Rita Darko",
-    "table": "3"
-  },
-  {
-    "name": "Rita Yeboah",
-    "table": "13"
-  },
-  {
-    "name": "Robell Nyirendah",
-    "table": "14"
-  },
-  {
-    "name": "Rosemond Gyimah",
-    "table": "7"
-  },
-  {
-    "name": "Ruth Manu",
-    "table": "13"
-  },
-  {
-    "name": "S K Dankwah",
-    "table": "13"
-  },
-  {
-    "name": "Salafina Owusu",
-    "table": "17"
-  },
-  {
-    "name": "Samuel Osei",
-    "table": "11"
-  },
-  {
-    "name": "Samuel Wiredu",
-    "table": "2"
-  },
-  {
-    "name": "Sara Osei Mensah",
-    "table": "10"
-  },
-  {
-    "name": "Sayaka Ri",
-    "table": "14"
-  },
-  {
-    "name": "Sean Asare",
-    "table": "3"
-  },
-  {
-    "name": "Serwaa Amaning",
-    "table": "10"
-  },
-  {
-    "name": "Sherserry Anum",
-    "table": "16"
-  },
-  {
-    "name": "Simon Asare",
-    "table": "3"
-  },
-  {
-    "name": "Sledge Spraku",
-    "table": "12"
-  },
-  {
-    "name": "Solange Asare",
-    "table": "3"
-  },
-  {
-    "name": "Stephanie Sarpong",
-    "table": "16"
-  },
-  {
-    "name": "Tarah Paul",
-    "table": "12"
-  },
-  {
-    "name": "Thomas Ahenguah",
-    "table": "4"
-  },
-  {
-    "name": "Vera Serwaa Safo",
-    "table": "17"
-  },
-  {
-    "name": "vince + 1",
-    "table": "18"
-  },
-  {
-    "name": "vince + 2",
-    "table": "18"
-  },
-  {
-    "name": "vince + 3",
-    "table": "18"
-  },
-  {
-    "name": "Vince Addai",
-    "table": "18"
-  },
-  {
-    "name": "Vivien Schroeder",
-    "table": "18"
-  },
-  {
-    "name": "Wilhemina Osei",
-    "table": "11"
-  },
-  {
-    "name": "Will",
-    "table": "11"
-  },
-  {
-    "name": "Yaw Appau",
-    "table": "11"
-  },
-  {
-    "name": "Yaw Atwereboanah",
-    "table": "6"
-  }
+      {"name":"Mr Otoabaa Asare","table":"1"},
+      {"name":"Mrs Victoria Boateng","table":"1"},
+      {"name":"Mr Joe Kissi","table":"1"},
+      {"name":"Mrs Lisette Kissi","table":"1"},
+      {"name":"Mr Dickson Ampadu","table":"1"},
+      {"name":"Mrs Christy Ampadu","table":"1"},
+      {"name":"Ma Selina Nana Pokuah","table":"1"},
+      {"name":"Mr Eric Osei","table":"1"},
+      {"name":"Mrs Nana Yaa Osei","table":"1"},
+      {"name":"Mrs Hilda Addo","table":"1"},
+      {"name":"Mr Addo","table":"1"},
+      {"name":"Mr Cobbie Boasiako","table":"1"},
+      {"name":"Mr Ebo Quansah","table":"2"},
+      {"name":"Ms Pearl Sasu","table":"2"},
+      {"name":"Samuel Wiredu","table":"2"},
+      {"name":"Mrs Dorcas Agbeko","table":"2"},
+      {"name":"Dela and Andrew Agbeko","table":"2"},
+      {"name":"Mary Morisson","table":"2"},
+      {"name":"Ellen Gadza","table":"2"},
+      {"name":"Ps. Sampson Appiah Kubi","table":"2"},
+      {"name":"Karen Appiah Kubi","table":"2"},
+      {"name":"Persis Appiah Kubi","table":"2"},
+      {"name":"Justin Appiah Kubi","table":"2"},
+      {"name":"Betty Amankwah","table":"3"},
+      {"name":"Awura Amankwah","table":"3"},
+      {"name":"Amankwah 2","table":"3"},
+      {"name":"Mr Kofi Asare","table":"3"},
+      {"name":"Mrs Sarah Asare","table":"3"},
+      {"name":"Simon Asare","table":"3"},
+      {"name":"Solange Asare","table":"3"},
+      {"name":"Sean Asare","table":"3"},
+      {"name":"Rita Darko","table":"3"},
+      {"name":"Nelly Darko","table":"3"},
+      {"name":"Isaac Nkrumah","table":"4"},
+      {"name":"Thomas Ahenguah","table":"4"},
+      {"name":"Christina Ahenguah","table":"4"},
+      {"name":"Gloria Donkor","table":"4"},
+      {"name":"Dr. Douglas Boakye","table":"4"},
+      {"name":"Mrs Hilda Boakye","table":"4"},
+      {"name":"Mr Samuel Sarkodie","table":"4"},
+      {"name":"Dr. Isaac Fordjuor","table":"4"},
+      {"name":"Mrs Isaac Fordjuor","table":"4"},
+      {"name":"Mercy Owusu","table":"4"},
+      {"name":"Mr Ohene Kusi","table":"4"},
+      {"name":"Mrs Mary Ohene Kusi","table":"4"},
+      {"name":"Emma Osei","table":"5"},
+      {"name":"Erica Osei","table":"5"},
+      {"name":"Juliana Osei","table":"5"},
+      {"name":"Cassandra Berko","table":"5"},
+      {"name":"Ezekiel Asare","table":"5"},
+      {"name":"Bismark Boadi","table":"5"},
+      {"name":"Isaiah Berko","table":"5"},
+      {"name":"Lina Konadu","table":"5"},
+      {"name":"Flora Baffo-Sakyi","table":"5"},
+      {"name":"Benjamin Asiedu","table":"5"},
+      {"name":"Gabriel Baffo-Sakyi","table":"5"},
+      {"name":"Yaw Atwereboanah","table":"6"},
+      {"name":"Kwadwo Ampim-Darko","table":"6"},
+      {"name":"Attah Adjei-Boateng","table":"6"},
+      {"name":"Ama Adjei-Boateng","table":"6"},
+      {"name":"Devin Adjei-Boateng","table":"6"},
+      {"name":"Caleb Adjei-Boateng","table":"6"},
+      {"name":"Jabez Adjei-Boateng","table":"6"},
+      {"name":"Eunice Amankwah","table":"6"},
+      {"name":"Mrs Mary Boakye","table":"6"},
+      {"name":"Mr Boakye (Sly)","table":"6"},
+      {"name":"Antoinette","table":"7"},
+      {"name":"Mrs Phyllis Mensah","table":"7"},
+      {"name":"Bra Effa","table":"7"},
+      {"name":"Mr Osei Bonsu","table":"7"},
+      {"name":"Mrs Osei Bonsu","table":"7"},
+      {"name":"Angela Yeboah","table":"7"},
+      {"name":"Joyce Asamoah","table":"7"},
+      {"name":"Mrs Mercy Aggrey Fynn","table":"7"},
+      {"name":"Faustina Sarpong","table":"7"},
+      {"name":"Rosemond Gyimah","table":"7"},
+      {"name":"Benedicta Agbeshie","table":"7"},
+      {"name":"Mr Opoku-Ware","table":"8"},
+      {"name":"Mrs Opoku-Ware","table":"8"},
+      {"name":"Mr Joseph Yankey","table":"8"},
+      {"name":"Mr. Kofi Ofori","table":"8"},
+      {"name":"Mr Otis Adu Boafo","table":"8"},
+      {"name":"Beatrice Amoah","table":"8"},
+      {"name":"Mr. Paul Yeboah","table":"8"},
+      {"name":"Mrs. Rebecca Yeboah","table":"8"},
+      {"name":"Mr. Edward Manu","table":"8"},
+      {"name":"Mrs. Sarah Manu","table":"8"},
+      {"name":"Mrs Mary Addai","table":"8"},
+      {"name":"Mr Kyeame Adjei","table":"9"},
+      {"name":"Abigail Adjei","table":"9"},
+      {"name":"Mrs Juliet Amponsah","table":"9"},
+      {"name":"Pastor Damson Oppong","table":"9"},
+      {"name":"Mrs Linda Oppong","table":"9"},
+      {"name":"Ps John K Amoah","table":"9"},
+      {"name":"Mrs Ps Amoah","table":"9"},
+      {"name":"Oteng + 1","table":"9"},
+      {"name":"Elder Dan Oteng","table":"9"},
+      {"name":"Nat Oteng","table":"9"},
+      {"name":"Abigail Osei Mensah","table":"10"},
+      {"name":"Christiana Appiagyei","table":"10"},
+      {"name":"Sara Osei Mensah","table":"10"},
+      {"name":"Christina Osei Mensah","table":"10"},
+      {"name":"James Appiah Kubi","table":"10"},
+      {"name":"Serwaa Amaning","table":"10"},
+      {"name":"Margaret Osei Boateng","table":"10"},
+      {"name":"Linda Fosu Dey","table":"10"},
+      {"name":"Jephtah Dey","table":"10"},
+      {"name":"Gifty Rose Owusu Donkor","table":"10"},
+      {"name":"Mr Donkor","table":"10"},
+      {"name":"Linda Boachie","table":"11"},
+      {"name":"Yaw Appau","table":"11"},
+      {"name":"Will","table":"11"},
+      {"name":"Ernest barnie","table":"11"},
+      {"name":"Mr Daniel Owusu Djan","table":"11"},
+      {"name":"Mrs Owusu Djan","table":"11"},
+      {"name":"Harrison Poku","table":"11"},
+      {"name":"Mr Mills Duodu","table":"11"},
+      {"name":"Mrs Abigail Duodu","table":"11"},
+      {"name":"Samuel Osei","table":"11"},
+      {"name":"Wilhemina Osei","table":"11"},
+      {"name":"Paul Lake","table":"12"},
+      {"name":"Joan Lake","table":"12"},
+      {"name":"Ebenezer","table":"12"},
+      {"name":"Naura Aning","table":"12"},
+      {"name":"Maura Aning","table":"12"},
+      {"name":"Nicole Fontyn-Taylor","table":"12"},
+      {"name":"Nneka MacGregor","table":"12"},
+      {"name":"Kelsy Evelyn Dundas","table":"12"},
+      {"name":"Tarah Paul","table":"12"},
+      {"name":"Mrs Ford Osei Boakye","table":"12"},
+      {"name":"Sledge Spraku","table":"12"},
+      {"name":"Mary Manu","table":"13"},
+      {"name":"Agyeman Opoku","table":"13"},
+      {"name":"Mr. Samuel Mensah","table":"13"},
+      {"name":"Mrs. Haggar Opoku Mensah","table":"13"},
+      {"name":"Mr Gombar","table":"13"},
+      {"name":"Mrs Matilda Manu Gombar","table":"13"},
+      {"name":"Hana Manu","table":"13"},
+      {"name":"Ruth Manu","table":"13"},
+      {"name":"Abel Manu","table":"13"},
+      {"name":"S K Dankwah","table":"13"},
+      {"name":"Rita Yeboah","table":"13"},
+      {"name":"Mary Amofa","table":"14"},
+      {"name":"Lola Umebuani","table":"14"},
+      {"name":"Oppong Antwi","table":"14"},
+      {"name":"Mr Parfait Migisha","table":"14"},
+      {"name":"Mrs Allison Migisha","table":"14"},
+      {"name":"Attah Adjei-Boateng","table":"14"},
+      {"name":"Robell Nyirendah","table":"14"},
+      {"name":"Alex Harris","table":"14"},
+      {"name":"Nils Bonfils","table":"14"},
+      {"name":"Sayaka Ri","table":"14"},
+      {"name":"Rashad Idris","table":"14"},
+      {"name":"Kenneth Gyabaa","table":"15"},
+      {"name":"Joshua Tabi","table":"15"},
+      {"name":"Kwazi Opoku-Ware","table":"15"},
+      {"name":"Elikem Worwui-Brown","table":"15"},
+      {"name":"Jeremy Afrifa","table":"15"},
+      {"name":"George Acheampong","table":"15"},
+      {"name":"Joash Ataakorerkpa","table":"15"},
+      {"name":"Jake Annor Darko Ebenezer","table":"15"},
+      {"name":"Nana Opoku Achepim","table":"15"},
+      {"name":"Richard Boateng","table":"15"},
+      {"name":"Kingsley Kwarteng","table":"15"},
+      {"name":"Hilary Owusu","table":"16"},
+      {"name":"Helena Opoku-Ware","table":"16"},
+      {"name":"Chelsea Afrifa","table":"16"},
+      {"name":"Stephanie Sarpong","table":"16"},
+      {"name":"Ashley Opoku-Ware","table":"16"},
+      {"name":"Sherserry Anum","table":"16"},
+      {"name":"Joseph Allen","table":"16"},
+      {"name":"Loretta Ampadu","table":"16"},
+      {"name":"Ikemefuna Ekweozor","table":"16"},
+      {"name":"Asante Dickson","table":"16"},
+      {"name":"Salafina Owusu","table":"17"},
+      {"name":"Mila Oppong Antwi","table":"17"},
+      {"name":"Desmond Mensah","table":"17"},
+      {"name":"Naomi Ofori","table":"17"},
+      {"name":"Isabelle Amoako","table":"17"},
+      {"name":"Angela Yeboah","table":"17"},
+      {"name":"Kimberly Ofori","table":"17"},
+      {"name":"Linda Ofori","table":"17"},
+      {"name":"Gabriel Konadu-Okyere","table":"17"},
+      {"name":"Vera Serwaa Safo","table":"17"},
+      {"name":"Obed Gyasi","table":"17"},
+      {"name":"Natalie","table":"18"},
+      {"name":"Natalie's Assistant","table":"18"},
+      {"name":"Vivien Schroeder","table":"18"},
+      {"name":"Abena Konadu","table":"18"},
+      {"name":"Vince Addai","table":"18"},
+      {"name":"MC","table":"18"},
+      {"name":"vince + 1","table":"18"},
+      {"name":"vince + 2","table":"18"},
+      {"name":"vince + 3","table":"18"}
     ];
 
     // ------------ Utilities -------------------------------------------------
-    const norm = s => (s || "").toString().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const norm = s => (s||"").toString().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 
-    function dedupeAndSort(data){
-      const clean = data
-        .filter(x => x && x.name && x.table)
-        .map(x => ({ name: x.name.toString().trim(), table: x.table.toString().trim() }))
-        .sort((a,b) => a.name.localeCompare(b.name));
-      const map = new Map();
-      for(const g of clean){ map.set(norm(g.name), g); }
-      return Array.from(map.values());
+    function cleanAndSort(data){
+      return data
+        .filter(x=>x && x.name && x.table)
+        .map(x=>({ name: x.name.toString().trim(), table: x.table.toString().trim() }))
+        .sort((a,b)=>a.name.localeCompare(b.name));
     }
 
     function groupByTable(data){
       const groups = new Map();
-      for(const g of data){
-        const key = g.table.toString();
-        if(!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(g);
-      }
-      for(const [k, arr] of groups){ arr.sort((a,b)=>a.name.localeCompare(b.name)); }
-      return Array.from(groups.entries()).sort((a,b)=>{
-        const na = Number(a[0]), nb = Number(b[0]);
-        if(!isNaN(na) && !isNaN(nb)) return na - nb; 
-        return a[0].localeCompare(b[0]);
-      });
+      for(const g of data){ const k=g.table.toString(); if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(g); }
+      for(const [k,arr] of groups){ arr.sort((a,b)=>a.name.localeCompare(b.name)); }
+      return Array.from(groups.entries()).sort((a,b)=>{ const na=Number(a[0]), nb=Number(b[0]); return (!isNaN(na)&&!isNaN(nb)) ? na-nb : a[0].localeCompare(b[0]); });
     }
 
-    function searchGuests(query, data){
-      const q = norm(query);
-      if(!q) return [];
+    function searchGuests(query,data){
+      const q = norm(query); if(!q) return [];
       const tokens = q.split(/\s+/).filter(Boolean);
-      return data
-        .map(g => {
-          const n = norm(g.name);
-          let score = 0;
-          if(n.includes(q)) score += 2; // full substring
-          for(const t of tokens){ if(n.includes(t)) score += 1; }
-          return { g, score };
-        })
-        .filter(x => x.score > 0)
-        .sort((a,b) => b.score - a.score || a.g.name.localeCompare(b.g.name))
-        .map(x => x.g)
-        .slice(0, 20);
+      return data.map(g=>{ const n=norm(g.name); let score=0; if(n.includes(q)) score+=2; for(const t of tokens){ if(n.includes(t)) score+=1; } return {g,score}; })
+                 .filter(x=>x.score>0)
+                 .sort((a,b)=>b.score-a.score || a.g.name.localeCompare(b.g.name))
+                 .map(x=>x.g).slice(0,20);
     }
 
     function renderResults(list){
-      const el = document.getElementById('results');
-      el.innerHTML = '';
-      if(list.length === 0){ el.innerHTML = '<div class="muted">No matches yet. Keep typing…</div>'; return; }
+      const el=document.getElementById('results'); el.innerHTML='';
+      if(list.length===0){ el.innerHTML='<div class="muted">No matches yet. Keep typing…</div>'; return; }
       for(const r of list){
-        const div = document.createElement('div');
-        div.className = 'result';
-        div.innerHTML = `<div class="name">${escapeHtml(r.name)}</div><div class="table" aria-label="Table Number">Table ${escapeHtml(r.table)}</div>`;
+        const div=document.createElement('div'); div.className='result';
+        div.innerHTML=`<div class="name">${escapeHtml(r.name)}</div><div class="table" aria-label="Table Number">Table ${escapeHtml(r.table)}</div>`;
         el.appendChild(div);
       }
     }
 
     function renderTables(data){
-      const container = document.getElementById('byTable');
-      container.innerHTML = '';
-      const groups = groupByTable(data);
-      for(const [table, list] of groups){
-        const card = document.createElement('div');
-        card.className = 'card';
-        const items = list.map(x => `<div>${escapeHtml(x.name)}</div>`).join('');
-        card.innerHTML = `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table ${escapeHtml(table)}</span><span class="small muted">${list.length} guest${list.length!==1?'s':''}</span></div>${items}`;
+      const container=document.getElementById('byTable'); container.innerHTML='';
+      const groups=groupByTable(data);
+      for(const [table,list] of groups){
+        const card=document.createElement('div'); card.className='card';
+        const items=list.map(x=>`<div>${escapeHtml(x.name)}</div>`).join('');
+        card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="pill">Table ${escapeHtml(table)}</span><span class="small muted">${list.length} guest${list.length!==1?'s':''}</span></div>${items}`;
         container.appendChild(card);
       }
     }
 
-    function escapeHtml(s){
-      return s.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
-    }
+    function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])); }
 
-    // Convert current data into a new standalone HTML download (bakes in your data)
+    // Bake current data into a new standalone HTML download
     function downloadSelfContained(){
-      const blob = new Blob([document.documentElement.outerHTML.replace(/let GUESTS = \[[\s\S]*?\];/,
-        'let GUESTS = ' + JSON.stringify(GUESTS, null, 2) + ';')], { type: 'text/html;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'index.html';
-      a.click();
-      URL.revokeObjectURL(a.href);
+      const blob = new Blob([document.documentElement.outerHTML.replace(/let GUESTS = \[[\s\S]*?\];/,'let GUESTS = '+JSON.stringify(GUESTS,null,2)+';')], {type:'text/html;charset=utf-8'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='index.html'; a.click(); URL.revokeObjectURL(a.href);
     }
 
     // ------------ QR --------------------------------------------------------
     function makeQR(){
-      const box = document.getElementById('qrcode');
-      box.innerHTML = '';
-      const url = location.href; // use deployed URL when hosted
-      new QRCode(box, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+      const box=document.getElementById('qrcode'); box.innerHTML='';
+      const url=location.href; new QRCode(box,{text:url,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
     }
     function saveQR(){
-      const canvas = document.querySelector('#qrcode canvas');
-      if(canvas){
-        const a = document.createElement('a');
-        a.href = canvas.toDataURL('image/png');
-        a.download = 'wedding-qr.png';
-        a.click();
-      } else {
-        // Fallback if QRCode library rendered an <img>
-        const img = document.querySelector('#qrcode img');
-        if(!img){ alert('QR not ready yet'); return; }
-        const c = document.createElement('canvas');
-        const ctx = c.getContext('2d');
-        c.width = img.naturalWidth; c.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0);
-        const a = document.createElement('a');
-        a.href = c.toDataURL('image/png');
-        a.download = 'wedding-qr.png';
-        a.click();
-      }
+      const canvas=document.querySelector('#qrcode canvas');
+      if(canvas){ const a=document.createElement('a'); a.href=canvas.toDataURL('image/png'); a.download='wedding-qr.png'; a.click(); return; }
+      const img=document.querySelector('#qrcode img');
+      if(!img){ alert('QR not ready yet'); return; }
+      const c=document.createElement('canvas'); const ctx=c.getContext('2d'); c.width=img.naturalWidth; c.height=img.naturalHeight; ctx.drawImage(img,0,0);
+      const a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='wedding-qr.png'; a.click();
     }
 
     // ------------ Event wiring ---------------------------------------------
     function hydrate(){
-      // admin gating
       wireAdminShortcut();
-      checkAdminFromURL();
+      tryURLAdmin();
 
-      GUESTS = dedupeAndSort(GUESTS);
+      GUESTS = cleanAndSort(GUESTS); // keep duplicates, just sort
       renderTables(GUESTS);
       renderResults([]);
       makeQR();
 
-      const search = document.getElementById('search');
-      search.addEventListener('input', () => {
-        const list = searchGuests(search.value, GUESTS);
-        renderResults(list);
-      });
+      const search=document.getElementById('search');
+      search.addEventListener('input',()=>{ renderResults(searchGuests(search.value,GUESTS)); });
 
       document.getElementById('qrRefresh').addEventListener('click', makeQR);
       document.getElementById('qrSave').addEventListener('click', saveQR);
 
-      // Admin-only controls (panel is hidden unless admin)
-      const loadBtn = document.getElementById('loadData');
+      const loadBtn=document.getElementById('loadData');
       if(loadBtn){
-        loadBtn.addEventListener('click', () => {
-          const raw = document.getElementById('paste').value.trim();
+        loadBtn.addEventListener('click',()=>{
+          const raw=document.getElementById('paste').value.trim();
           if(!raw){ alert('Paste lines like:\nFirst Last, 8'); return; }
-          const lines = raw.split(/\n+/);
-          const parsed = [];
-          for(const line of lines){
-            const m = line.split(',');
-            if(m.length >= 2){
-              const name = m[0].trim();
-              const table = m.slice(1).join(',').trim(); // allow commas in table names
-              if(name && table){ parsed.push({ name, table }); }
-            }
-          }
-          if(parsed.length === 0){ alert('Could not parse any rows. Ensure each line has a comma separating name and table.'); return; }
-          GUESTS = dedupeAndSort(parsed);
-          document.getElementById('paste').value = '';
-          document.getElementById('search').value = '';
-          renderTables(GUESTS);
-          renderResults([]);
+          const lines=raw.split(/\n+/); const parsed=[];
+          for(const line of lines){ const m=line.split(','); if(m.length>=2){ const name=m[0].trim(); const table=m.slice(1).join(',').trim(); if(name&&table){ parsed.push({name,table}); } } }
+          if(parsed.length===0){ alert('Could not parse any rows. Ensure each line has a comma separating name and table.'); return; }
+          GUESTS=cleanAndSort(parsed);
+          document.getElementById('paste').value=''; document.getElementById('search').value='';
+          renderTables(GUESTS); renderResults([]);
           alert('Guest list loaded. Try searching!');
         });
       }
 
-      const dlBtn = document.getElementById('downloadExample');
+      const dlBtn=document.getElementById('downloadExample');
       if(dlBtn){ dlBtn.addEventListener('click', downloadSelfContained); }
     }
 
