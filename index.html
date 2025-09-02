@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find Your Table</title>
+  <style>
+    :root {
+      --bg: #fafafa; --card: #ffffff; --text: #111827; --muted: #6b7280; --accent:#8b5cf6;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--text); background: var(--bg); }
+    header { padding: 28px 16px 8px; text-align: center; }
+    h1 { margin: 0 0 8px; font-size: clamp(22px, 3.5vw, 36px); }
+    .sub { color: var(--muted); margin: 0 0 20px; }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 12px 16px 40px; }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,.06); padding: 16px; }
+
+    .row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 720px) {
+      .row { grid-template-columns: 2fr 1fr; }
+    }
+
+    .input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 16px; outline: none; }
+    .input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(139, 92, 246, .15); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; font-size: 14px; }
+    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn.ghost { background: transparent; }
+
+    .results { margin-top: 10px; display: grid; gap: 10px; }
+    .result { border: 1px solid #f1f5f9; padding: 12px; border-radius: 12px; background: #fff; display:flex; align-items:center; justify-content:space-between; }
+    .name { font-weight: 600; }
+    .table { font-variant-numeric: tabular-nums; padding: 6px 10px; border-radius: 999px; background: #f3f4f6; }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+
+    details { border: 1px dashed #e5e7eb; border-radius: 12px; padding: 12px; }
+    summary { cursor: pointer; font-weight: 600; }
+
+    .pill { display:inline-block; padding: 6px 10px; border-radius: 999px; background:#eef2ff; color:#4338ca; font-weight:600; }
+
+    .grid { display:grid; gap: 8px; }
+
+    .qr-wrap { display:flex; align-items:center; justify-content:center; padding: 16px; background:#fff; border:1px solid #e5e7eb; border-radius: 12px; }
+
+    .footer { margin-top: 18px; text-align:center; color: var(--muted); font-size: 12px; }
+  </style>
+  <!-- QRCode library (MIT) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Find Your Table</h1>
+    <p class="sub">Type your name to see your table number</p>
+  </header>
+
+  <main class="container">
+    <section class="row">
+      <div class="card">
+        <div class="grid" style="gap:12px">
+          <input id="search" class="input" type="text" placeholder="Start typing your first or last name…" autocomplete="name" />
+          <div class="small muted">Tip: You can search by first name, last name, or any part of the name. Accents and case don’t matter.</div>
+          <div id="results" class="results"></div>
+        </div>
+      </div>
+
+      <div class="grid" style="gap:12px">
+        <div class="card">
+          <div class="grid" style="gap:10px">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+              <strong>QR for this page</strong>
+              <button id="qrRefresh" class="btn">Refresh</button>
+            </div>
+            <div id="qrcode" class="qr-wrap" aria-label="QR Code for this page"></div>
+            <div class="small muted">Scan to open this exact page. Print on signage or add to invitations.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="grid" style="gap:10px">
+            <strong>Data Loader (optional)</strong>
+            <textarea id="paste" class="input" rows="6" placeholder="Paste lines like:\nFirst Last, Table 8\nAma Mensah, 12\nKofi Boateng, 5"></textarea>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button id="loadData" class="btn primary">Load Pasted Data</button>
+              <button id="downloadExample" class="btn">Download Example HTML (with your data)</button>
+            </div>
+            <div class="small muted">No need to edit code! Paste “Name, Table” per line and click Load. Then test search above.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div style="height:16px"></div>
+
+    <section class="card">
+      <details>
+        <summary>Optional: Show per‑table lists (for ushers)</summary>
+        <div id="byTable" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:12px"></div>
+      </details>
+    </section>
+
+    <p class="footer">Made with ♥ for your big day. Works offline once loaded; host anywhere.</p>
+  </main>
+
+  <script>
+    // ------------ Data ------------------------------------------------------
+    // Default sample data. Replace this array OR use the Paste loader.
+    // Format: { name: "Guest Full Name", table: "Table Number or Name" }
+    let GUESTS = [
+      { name: "Ama Mensah", table: "8" },
+      { name: "Kofi Boateng", table: "5" },
+      { name: "Nana Akua Donkor", table: "12" },
+      { name: "Kwesi Owusu", table: "8" },
+      { name: "Efua Osei", table: "3" }
+    ];
+
+    // ------------ Utilities -------------------------------------------------
+    const norm = s => (s || "").toString().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+    function dedupeAndSort(data){
+      // Remove empty, trim, and sort by name
+      const clean = data
+        .filter(x => x && x.name && x.table)
+        .map(x => ({ name: x.name.toString().trim(), table: x.table.toString().trim() }))
+        .sort((a,b) => a.name.localeCompare(b.name));
+      // Keep last occurrence if duplicates by normalized name
+      const map = new Map();
+      for(const g of clean){ map.set(norm(g.name), g); }
+      return Array.from(map.values());
+    }
+
+    function groupByTable(data){
+      const groups = new Map();
+      for(const g of data){
+        const key = g.table.toString();
+        if(!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(g);
+      }
+      for(const [k, arr] of groups){ arr.sort((a,b)=>a.name.localeCompare(b.name)); }
+      return Array.from(groups.entries()).sort((a,b)=>{
+        // numeric-aware sort where possible
+        const na = Number(a[0]), nb = Number(b[0]);
+        if(!isNaN(na) && !isNaN(nb)) return na - nb; 
+        return a[0].localeCompare(b[0]);
+      });
+    }
+
+    // Simple substring + token match scoring
+    function searchGuests(query, data){
+      const q = norm(query);
+      if(!q) return [];
+      const tokens = q.split(/\s+/).filter(Boolean);
+      return data
+        .map(g => {
+          const n = norm(g.name);
+          let score = 0;
+          if(n.includes(q)) score += 2; // full substring
+          for(const t of tokens){ if(n.includes(t)) score += 1; }
+          return { g, score };
+        })
+        .filter(x => x.score > 0)
+        .sort((a,b) => b.score - a.score || a.g.name.localeCompare(b.g.name))
+        .map(x => x.g)
+        .slice(0, 20);
+    }
+
+    function renderResults(list){
+      const el = document.getElementById('results');
+      el.innerHTML = '';
+      if(list.length === 0){ el.innerHTML = '<div class="muted">No matches yet. Keep typing…</div>'; return; }
+      for(const r of list){
+        const div = document.createElement('div');
+        div.className = 'result';
+        div.innerHTML = `<div class="name">${escapeHtml(r.name)}</div><div class="table" aria-label="Table Number">Table ${escapeHtml(r.table)}</div>`;
+        el.appendChild(div);
+      }
+    }
+
+    function renderTables(data){
+      const container = document.getElementById('byTable');
+      container.innerHTML = '';
+      const groups = groupByTable(data);
+      for(const [table, list] of groups){
+        const card = document.createElement('div');
+        card.className = 'card';
+        const items = list.map(x => `<div>${escapeHtml(x.name)}</div>`).join('');
+        card.innerHTML = `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px"><span class="pill">Table ${escapeHtml(table)}</span><span class="small muted">${list.length} guest${list.length!==1?'s':''}</span></div>${items}`;
+        container.appendChild(card);
+      }
+    }
+
+    function escapeHtml(s){
+      return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    // Convert current data into a new standalone HTML download (bakes in your data)
+    function downloadSelfContained(){
+      const blob = new Blob([document.documentElement.outerHTML.replace(/let GUESTS = \[[\s\S]*?\];/,
+        'let GUESTS = ' + JSON.stringify(GUESTS, null, 2) + ';')], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'find-your-table.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // ------------ QR --------------------------------------------------------
+    function makeQR(){
+      const box = document.getElementById('qrcode');
+      box.innerHTML = '';
+      const url = location.href;
+      new QRCode(box, {
+        text: url,
+        width: 220,
+        height: 220,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    // ------------ Event wiring ---------------------------------------------
+    function hydrate(){
+      GUESTS = dedupeAndSort(GUESTS);
+      renderTables(GUESTS);
+      renderResults([]);
+      makeQR();
+
+      const search = document.getElementById('search');
+      search.addEventListener('input', () => {
+        const list = searchGuests(search.value, GUESTS);
+        renderResults(list);
+      });
+
+      document.getElementById('qrRefresh').addEventListener('click', makeQR);
+      document.getElementById('loadData').addEventListener('click', () => {
+        const raw = document.getElementById('paste').value.trim();
+        if(!raw){ alert('Paste lines like:\nFirst Last, 8'); return; }
+        const lines = raw.split(/\n+/);
+        const parsed = [];
+        for(const line of lines){
+          const m = line.split(',');
+          if(m.length >= 2){
+            const name = m[0].trim();
+            const table = m.slice(1).join(',').trim(); // allow commas in table names if any
+            if(name && table){ parsed.push({ name, table }); }
+          }
+        }
+        if(parsed.length === 0){ alert('Could not parse any rows. Ensure each line has a comma separating name and table.'); return; }
+        GUESTS = dedupeAndSort(parsed);
+        document.getElementById('paste').value = '';
+        document.getElementById('search').value = '';
+        renderTables(GUESTS);
+        renderResults([]);
+        alert('Guest list loaded. Try searching!');
+      });
+
+      document.getElementById('downloadExample').addEventListener('click', downloadSelfContained);
+    }
+
+    document.addEventListener('DOMContentLoaded', hydrate);
+  </script>
+<script>(function(){
+  const ADMIN_CODE = 'CHANGE-ME-ADMIN-CODE';
+  function enableAdmin(){ sessionStorage.setItem('admin','1'); apply(true); alert('Admin mode enabled'); }
+  function isAdmin(){ return sessionStorage.getItem('admin')==='1'; }
+  function apply(force){
+    const paste = document.getElementById('paste');
+    const adminCard = paste ? paste.closest('.card') : null;
+    if(adminCard){ adminCard.style.display = (force || isAdmin()) ? '' : 'none'; }
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.ctrlKey && e.shiftKey && (e.key==='A' || e.key==='a')){
+      const code = prompt('Enter admin passcode');
+      if(code && code===ADMIN_CODE) enableAdmin();
+      else if(code) alert('Incorrect passcode');
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    apply(false);
+    const params = new URLSearchParams(location.search);
+    if(params.get('admin')===ADMIN_CODE) enableAdmin();
+  });
+})();</script>
+</body>
+</html>
